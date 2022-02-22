@@ -1,6 +1,7 @@
-import React from 'react';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import { HomeNavigator } from './home.navigator';
+import React from "react";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import { HomeNavigator } from "./home.navigator";
+import { AnkanNavigator } from "./ankan.auth.navigation";
 
 /*
  * Navigation theming: https://reactnavigation.org/docs/en/next/themes.html
@@ -10,12 +11,12 @@ const navigatorTheme = {
   colors: {
     ...DefaultTheme.colors,
     // prevent layout blinking when performing navigation
-    background: 'transparent',
+    background: "transparent",
   },
 };
 
 export const AppNavigator = (): React.ReactElement => (
   <NavigationContainer theme={navigatorTheme}>
-    <HomeNavigator/>
+    <AnkanNavigator />
   </NavigationContainer>
 );

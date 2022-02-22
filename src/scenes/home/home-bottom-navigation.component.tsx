@@ -1,14 +1,23 @@
-import React from 'react';
-import { Animated, StyleSheet, ViewStyle } from 'react-native';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BottomNavigationTab, Divider, StyleService } from '@ui-kitten/components';
-import { BrandBottomNavigation } from '../../components/brand-bottom-navigation.component';
-import { ColorPaletteIcon, LayoutIcon, StarOutlineIcon } from '../../components/icons';
+import React from "react";
+import { Animated, StyleSheet, ViewStyle } from "react-native";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  BottomNavigationTab,
+  Divider,
+  StyleService,
+} from "@ui-kitten/components";
+import { BrandBottomNavigation } from "../../components/brand-bottom-navigation.component";
+import {
+  ColorPaletteIcon,
+  LayoutIcon,
+  StarOutlineIcon,
+} from "../../components/icons";
 
 const useVisibilityAnimation = (visible: boolean): ViewStyle => {
-
-  const animation = React.useRef<Animated.Value>(new Animated.Value(visible ? 1 : 0));
+  const animation = React.useRef<Animated.Value>(
+    new Animated.Value(visible ? 1 : 0)
+  );
 
   React.useEffect(() => {
     Animated.timing(animation.current, {
@@ -28,12 +37,15 @@ const useVisibilityAnimation = (visible: boolean): ViewStyle => {
         }),
       },
     ],
-    position: visible ? null : 'absolute',
+    position: visible ? null : "absolute",
   };
 };
 
-export const HomeBottomNavigation: React.FC<BottomTabBarProps> = ({ navigation, state, descriptors }) => {
-
+export const HomeBottomNavigation: React.FC<BottomTabBarProps> = ({
+  navigation,
+  state,
+  descriptors,
+}) => {
   const focusedRoute = state.routes[state.index];
   const { tabBarVisible } = descriptors[focusedRoute.key].options;
   const safeAreaInsets = useSafeAreaInsets();
@@ -45,24 +57,22 @@ export const HomeBottomNavigation: React.FC<BottomTabBarProps> = ({ navigation, 
   };
 
   return (
-    <Animated.View style={[styles.container, transforms, { paddingBottom: tabBarVisible ? safeAreaInsets.bottom : 0 }]}>
+    <Animated.View
+      style={[
+        styles.container,
+        transforms,
+        { paddingBottom: tabBarVisible ? safeAreaInsets.bottom : 0 },
+      ]}
+    >
       <Divider />
       <BrandBottomNavigation
-        appearance='noIndicator'
+        appearance="noIndicator"
         selectedIndex={state.index}
-        onSelect={onSelect}>
-        <BottomNavigationTab
-          title='Layouts'
-          icon={LayoutIcon}
-        />
-        <BottomNavigationTab
-          title='Components'
-          icon={StarOutlineIcon}
-        />
-        <BottomNavigationTab
-          title='Themes'
-          icon={ColorPaletteIcon}
-        />
+        onSelect={onSelect}
+      >
+        <BottomNavigationTab title="Products" icon={LayoutIcon} />
+        {/* <BottomNavigationTab title="Components" icon={StarOutlineIcon} /> */}
+        <BottomNavigationTab title="Settings" icon={ColorPaletteIcon} />
       </BrandBottomNavigation>
     </Animated.View>
   );
