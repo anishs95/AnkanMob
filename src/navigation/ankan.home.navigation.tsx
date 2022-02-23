@@ -13,13 +13,13 @@ import { AnkanRewardScreen } from "../scenes/ankan-ecommerce-scenes/ankan-reward
 import { AnkanOrderScreen } from "../scenes/ankan-ecommerce-scenes/ankan-orders.components";
 import { ProductListScreen } from "../scenes/ankan-ecommerce-scenes/product-list.component";
 import { ProductDetailsScreen } from "../scenes/ankan-ecommerce-scenes/product-details.component";
-import { Profile1Screen } from "../scenes/social/profile-1.component";
+
 //import { RewardScreen } from "../scenes/social/profile-7.component";
 // import { ProductDetails3Screen } from "../scenes/ecommerce/product-details-3.component";
 // import { ProductList2Screen } from "../scenes/ecommerce/product-list.component2";
 import { CategoryListScreen } from "../scenes/ankan-ecommerce-scenes/category-list.component";
 import { ShoppingCartScreen } from "../scenes/ankan-ecommerce-scenes/ankan-shopping-cart.component";
-import { PaymentScreen } from "../scenes/ecommerce/payment.component";
+
 import { LibrariesScreen } from "../scenes/libraries/libraries.component";
 import { SettingsScreen } from "../scenes/dashboards/settings.component";
 

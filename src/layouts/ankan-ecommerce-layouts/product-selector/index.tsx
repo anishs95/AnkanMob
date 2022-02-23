@@ -22,7 +22,7 @@ export default ({ navigation }): React.ReactElement => {
   };
   useEffect(() => {
     fetch(
-      "https://api.dev.ankanchem.net/products/api/Product/GetProductTypeMasters",
+      "https://api.dev.ankanchem.net/products/api/Product/GetProductTypeMasters/60c8aaab54657b3c4296e938",
       {
         method: "GET",
         headers: {

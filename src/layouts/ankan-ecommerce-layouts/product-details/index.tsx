@@ -236,7 +236,7 @@ export default ({ navigation, props }): React.ReactElement => {
   };
 
   const decrementButtonEnabled = (): boolean => {
-    return data.quantity > 1;
+    return quantity > 1;
   };
   const renderHeader = (): React.ReactElement => (
     <Layout style={styles.header}>

@@ -24,27 +24,31 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
   const [isLoading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
+  const [categoryIDnumber, setcategoryIDnumber] = useState(String);
 
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("@categoryIDnumber");
+      console.log("categoryIDnumber :- " + jsonValue);
+      setcategoryIDnumber(jsonValue);
+    } catch (e) {
+      console.log("error in reading data product list ");
+    }
+  };
   useEffect(() => {
     fetch(
       "https://api.dev.ankanchem.net/products/api/Product/GetAllProducts/" +
-        "619744c0021fa30c08382237"
-      // "https://3glocgk9uk.execute-api.us-east-1.amazonaws.com/Prod/api/dummy/GetProductDetails/categoryId=" +
+        categoryIDnumber
     )
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
+
+    getData();
   }, []);
 
   var products: Product[] = data;
-  for (var i = 0; i < products.length; i++) {
-    //  arr_names[i] = i * 2
-    console.log("products " + products[i].name);
-  }
-  const displayProducts: Product[] = products.filter(
-    (product) => product.name === "route.name"
-  );
 
   const onItemPress = (prdDetails: []): void => {
     console.log("data here " + prdDetails);
@@ -52,6 +56,7 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
     const storeData = async (value) => {
       try {
         const jsonValue = JSON.stringify(value);
+        console.log("product list 2223:" + jsonValue);
         await AsyncStorage.setItem("@prdDetails", jsonValue);
         console.log("sucess in storing values of product details");
         navigation && navigation.navigate("ProductDetails");
@@ -61,19 +66,6 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
       }
     };
     storeData(prdDetails);
-    // var promise = new Promise(function (resolve, reject) {
-    //   setTimeout(function () {
-    //     storeData(prdDetails);
-    //   }, 2000);
-    // });
-
-    // promise;
-    // setTimeout(function () {
-    //   navigation &&
-    //     navigation.navigate("ProductDetails3", {
-    //       productsss: { data },
-    //     });
-    // }, 500); //run this after 3 seconds
   };
 
   const onItemCartPress = (index: number): void => {

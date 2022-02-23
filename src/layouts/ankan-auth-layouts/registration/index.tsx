@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,8 +7,11 @@ import {
   Input,
   StyleService,
   useStyleSheet,
+  Card,
+  Text,
 } from "@ui-kitten/components";
 
+import ModalDropdown from "react-native-modal-dropdown";
 import { ImageOverlay } from "./extra/image-overlay.component";
 import LinearGradient from "react-native-linear-gradient";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
@@ -17,12 +20,20 @@ export default ({ navigation }): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
   const [lastName, setLastName] = React.useState<string>();
   const [email, setEmail] = React.useState<string>();
-  const [place, setPlace] = React.useState<string>();
+  var [place, setPlace] = React.useState<string>();
   const [phno, setPhno] = React.useState<string>();
+  var [location, setLocation] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
+  const [locationList, setLocationList] = useState([]);
   const styles = useStyleSheet(themedStyles);
 
+  useEffect(() => {
+    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
+      .then((response) => response.json())
+      .then((json) => setLocationList(json))
+      .catch((error) => console.error(error));
+    //.finally(() => setLoading(false));
+  }, []);
   const register = (): void => {
     if (
       firstName == null ||
@@ -110,13 +121,42 @@ export default ({ navigation }): React.ReactElement => {
           value={email}
           onChangeText={setEmail}
         />
-        <Input
+        {/* <Input
           style={styles.formInput}
           placeholder="Ernakulam"
           label="PLACE"
           value={place}
           onChangeText={setPlace}
-        />
+        /> */}
+        {/* <ModalDropdown
+          options={value.types.map((value2, index2) => {
+            return value2.typeName;
+          })}
+          dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
+          style={styles.dropdown_5}
+          isFullWidth
+          textStyle={styles.dropdown_2_text}
+          onSelect={(index3, value3) => {
+            temp[index] = value.typeCategory + ":" + (index3 + 1);
+          }}
+        /> */}
+
+        <View>
+          <Text style={styles.formInput2} appearance={"hint"}>
+            LOCATION
+          </Text>
+          {/* <Text>{JSON.stringify(value.types)}</Text> */}
+          {/* {setTemp(value.types)} */}
+
+          <ModalDropdown
+            options={locationList.map((value, index) => {
+              place = value.id;
+              return value.locationName;
+            })}
+            style={styles.dropdown_5}
+          />
+        </View>
+
         <Input
           style={styles.formInput}
           placeholder="9998889990"
@@ -157,6 +197,9 @@ const themedStyles = StyleService.create({
     paddingBottom: 44,
     radius: 20,
   },
+  bookingCard: {
+    margin: 4,
+  },
 
   getOtpButton: {
     width: "100%",
@@ -169,7 +212,16 @@ const themedStyles = StyleService.create({
     marginTop: 20,
     paddingHorizontal: 16,
   },
-
+  dropdown_5: {
+    marginTop: 8,
+    borderColor: "lightgray",
+    height: 40,
+    backgroundColor: "#f8f9fd",
+    borderWidth: 0.5,
+    borderRadius: 5,
+    padding: 8,
+    paddingLeft: 20,
+  },
   signUpButton: {
     marginVertical: 34,
     marginHorizontal: 26,
@@ -181,6 +233,10 @@ const themedStyles = StyleService.create({
 
   formInput: {
     marginTop: 16,
+  },
+  formInput2: {
+    marginTop: 16,
+    fontSize: 12,
   },
 
   spinnerTextStyle: {

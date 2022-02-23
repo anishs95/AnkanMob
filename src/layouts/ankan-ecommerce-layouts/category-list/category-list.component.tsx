@@ -90,8 +90,25 @@ export const CategoryListScreen = ({
     (product) => product.name === route.name
   );
 
+  const onItemPress2 = (categoryIDnumber: String): void => {
+    console.log("categoryIDnumber" + categoryIDnumber);
+
+    const storeData = async (value) => {
+      try {
+        // const jsonValue = JSON.stringify(value);
+        //  console.log("product list 2223:" + jsonValue);
+        await AsyncStorage.setItem("@categoryIDnumber", value);
+        console.log("sucess in storing categoryIDnumber");
+        navigation && navigation.navigate("ProductList");
+      } catch (e) {
+        // saving error
+        console.log("failed in storing values of product details" + e);
+      }
+    };
+    storeData(categoryIDnumber);
+  };
   const onItemPress = (index: number): void => {
-    navigation.navigate("ProductList", { catId: index });
+    navigation.navigate("ProductList");
   };
 
   const renderItemFooter = (
@@ -124,7 +141,7 @@ export const CategoryListScreen = ({
       style={styles.productItem}
       header={() => renderItemHeader(info)}
       footer={() => renderItemFooter(info)}
-      onPress={() => onItemPress(info.item.id)}
+      onPress={() => onItemPress2(info.item.id)}
     >
       <Text style={styles.title} category="s1">
         {info.item.name}

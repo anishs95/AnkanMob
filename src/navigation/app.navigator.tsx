@@ -1,6 +1,5 @@
 import React from "react";
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
-import { HomeNavigator } from "./home.navigator";
 import { AnkanNavigator } from "./ankan.auth.navigation";
 
 /*
