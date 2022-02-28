@@ -101,7 +101,7 @@ export default ({ navigation }): React.ReactElement => {
           value.quantity,
           value.unit,
           value.colors,
-          value.imageUri
+          value.imageUrl
         );
         return prod;
       }
@@ -187,7 +187,9 @@ export default ({ navigation }): React.ReactElement => {
       onRemove={onItemRemove}
     />
   );
-
+  const onCheckoutButtonPress = (): void => {
+    navigation && navigation.navigate("Payment");
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -201,7 +203,11 @@ export default ({ navigation }): React.ReactElement => {
                 renderItem={renderProductItem}
                 ListFooterComponent={renderFooter}
               />
-              <Button style={styles.checkoutButton} size="giant">
+              <Button
+                style={styles.checkoutButton}
+                size="giant"
+                onPress={onCheckoutButtonPress}
+              >
                 CHECKOUT
               </Button>
             </View>

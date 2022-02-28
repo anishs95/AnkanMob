@@ -150,10 +150,17 @@ export default ({ navigation }): React.ReactElement => {
 
           <ModalDropdown
             options={locationList.map((value, index) => {
-              place = value.id;
+              // place = value.id;
               return value.locationName;
             })}
+            dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
             style={styles.dropdown_5}
+            isFullWidth
+            textStyle={styles.dropdown_2_text}
+            onSelect={(index3, value3) => {
+              // setLocationId(locationList[index3].id);
+              setPlace(value3);
+            }}
           />
         </View>
 
@@ -161,6 +168,7 @@ export default ({ navigation }): React.ReactElement => {
           style={styles.formInput}
           placeholder="9998889990"
           label="PHONE NUMBER"
+          keyboardType="numeric"
           value={phno}
           onChangeText={setPhno}
         />
@@ -241,5 +249,19 @@ const themedStyles = StyleService.create({
 
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  dropdown_2_text: {
+    //marginVertical: 10,
+    // marginHorizontal: 16,
+    fontSize: 14,
+    color: "#120",
+    textAlign: "center",
+    textAlignVertical: "center",
+  },
+  dropdown_3_dropdownTextStyle: {
+    // backgroundColor: "#000",
+    // color: "#fff",
+    marginHorizontal: 16,
+    fontSize: 12,
   },
 });

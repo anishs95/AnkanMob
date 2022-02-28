@@ -13,6 +13,8 @@ import { AnkanRewardScreen } from "../scenes/ankan-ecommerce-scenes/ankan-reward
 import { AnkanOrderScreen } from "../scenes/ankan-ecommerce-scenes/ankan-orders.components";
 import { ProductListScreen } from "../scenes/ankan-ecommerce-scenes/product-list.component";
 import { ProductDetailsScreen } from "../scenes/ankan-ecommerce-scenes/product-details.component";
+import { AddNewAddressScreen } from "../scenes/ankan-ecommerce-scenes/ankan-add-new-card.component";
+import { PaymentScreen } from "../scenes/ankan-ecommerce-scenes/ankan-payment.component";
 
 //import { RewardScreen } from "../scenes/social/profile-7.component";
 // import { ProductDetails3Screen } from "../scenes/ecommerce/product-details-3.component";
@@ -49,6 +51,8 @@ const HomeTabsNavigatorStack = (): React.ReactElement => (
     <Stack.Screen name="ShoppingCart" component={ShoppingCartScreen} />
     <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
     <Stack.Screen name="ProductList" component={ProductListScreen} />
+    <Stack.Screen name="Payment" component={PaymentScreen} />
+    <Stack.Screen name="NewAddress" component={AddNewAddressScreen} />
   </Stack.Navigator>
 );
 

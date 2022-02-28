@@ -33,7 +33,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
       product.quantity - 1,
       product.unit,
       product.colors,
-      product.imageUri
+      product.imageUrl
     );
 
     onProductChange(updatedProduct, index);
@@ -49,7 +49,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
       product.quantity + 1,
       product.unit,
       product.colors,
-      product.imageUri
+      product.imageUrl
     );
 
     onProductChange(updatedProduct, index);
@@ -57,7 +57,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
 
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
-      <Image style={styles.image} source={{ uri: product.imageUri }} />
+      <Image style={styles.image} source={{ uri: product.imageUrl }} />
       <View style={styles.detailsContainer}>
         <Text category="s1">{product.name}</Text>
         <Text appearance="hint" category="p2">
