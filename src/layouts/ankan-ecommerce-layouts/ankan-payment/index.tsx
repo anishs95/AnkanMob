@@ -32,6 +32,7 @@ export default ({ navigation }): React.ReactElement => {
   const [userId, setUserId] = React.useState<string>();
   const [locationId, setLocationId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(true);
+  const [addressDetails, setAddressDetails] = React.useState([]);
 
   const options: string[] = ["Option 1", "Option 2", "Option 3"];
 
@@ -59,6 +60,7 @@ export default ({ navigation }): React.ReactElement => {
       const jsonValue = await AsyncStorage.getItem("@shippingAddress");
       console.log("Address DETAILS :- " + jsonValue);
       const val = jsonValue != null ? JSON.parse(jsonValue) : null;
+      setAddressDetails(val);
       if (val) {
         setIsAddress(true);
         setAddressLine1(val.addressLine1);
@@ -97,6 +99,7 @@ export default ({ navigation }): React.ReactElement => {
       console.log("error in reading data ");
     }
   };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       getShippingAddress();
@@ -115,6 +118,44 @@ export default ({ navigation }): React.ReactElement => {
   }, [navigation]);
 
   const onBuyButtonPress = (): void => {
+    console.log("ON BUY BUTTON FINAL PRESS////////////////////");
+    console.log(addressDetails);
+    console.log(items);
+    console.log(locationId);
+    console.log(JSON.parse(userId));
+
+    fetch("https://api.dev.ankanchem.net/purchase/api/Purchase/PlaceOrder", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+      },
+      body: JSON.stringify({
+        UserId: JSON.parse(userId),
+        LocationId: locationId,
+        Items: items,
+        BillingAddress: addressDetails,
+        ShippingAddress: addressDetails,
+        ShippingCost: 0,
+        ModeOfPayment: 0,
+        Status: 0,
+        Discount: 0,
+        CouponCode: "",
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(JSON.stringify(json));
+        return json;
+      })
+      .catch((error) => {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.error("FAILED IN PLACING ORDER error " + error);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      });
+
     navigation && navigation.goBack();
   };
 

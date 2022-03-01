@@ -26,6 +26,7 @@ export default ({ navigation }): React.ReactElement => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [locationList, setLocationList] = useState([]);
   const styles = useStyleSheet(themedStyles);
+  const [locationId, setLocationId] = useState();
 
   useEffect(() => {
     fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
@@ -71,6 +72,13 @@ export default ({ navigation }): React.ReactElement => {
               JSON.stringify(json.activationId)
             );
             AsyncStorage.setItem("userId", JSON.stringify(json.userId));
+            AsyncStorage.setItem("locationId", locationId);
+            console.log(
+              "Registering..." +
+                JSON.stringify(json) +
+                "with location id" +
+                locationId
+            );
             navigation && navigation.navigate("OtpScreen");
             setIsLoading(false);
           }
@@ -158,7 +166,7 @@ export default ({ navigation }): React.ReactElement => {
             isFullWidth
             textStyle={styles.dropdown_2_text}
             onSelect={(index3, value3) => {
-              // setLocationId(locationList[index3].id);
+              setLocationId(locationList[index3].id);
               setPlace(value3);
             }}
           />

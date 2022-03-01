@@ -12,11 +12,11 @@ const Stack = createStackNavigator();
 
 export const AnkanNavigator = (): React.ReactElement => (
   <Stack.Navigator headerMode="none">
-    {/* <Stack.Screen name="Home" component={AnkanHome} /> */}
+    <Stack.Screen name="Home" component={AnkanHome} />
     <Stack.Screen name="Registration" component={RegistarationScreen} />
     <Stack.Screen name="OtpScreen" component={OTPScreen} />
     <Stack.Screen name="AdminApproval" component={AdminApproval} />
-    <Stack.Screen name="Home" component={AnkanHome} />
+    {/* <Stack.Screen name="Home" component={AnkanHome} /> */}
     <Stack.Screen name="Logout" component={LogOut} />
   </Stack.Navigator>
 );
