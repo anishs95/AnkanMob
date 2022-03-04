@@ -20,11 +20,15 @@ import { Product } from "./extra/data2";
 
 const products: Product[] = [];
 
-export const ProductListScreen = ({ navigation }): React.ReactElement => {
+export const ProductListScreen = ({
+  navigation,
+  route,
+}): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [isLoading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
+  const [dataParam, setDataParam] = useState({});
   const [categoryIDnumber, setcategoryIDnumber] = useState(String);
 
   const getData = async () => {
@@ -51,8 +55,60 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
       console.log("error in reading data product list ");
     }
   };
+
+  const getData2 = async (par) => {
+    try {
+      // const jsonValue = await AsyncStorage.getItem("@categoryIDnumber");
+      dataParam["TileProductSelectorSearch"] = JSON.parse(par);
+      const lcnId = await AsyncStorage.getItem("locationId");
+      console.log("lcnId in here :- " + lcnId);
+      console.log(
+        "route.params.pselect in here2 :- " + JSON.stringify(dataParam)
+      );
+
+      fetch(
+        "https://api.dev.ankanchem.net/products/api/product/FindProductsByProductSelector/" +
+          lcnId +
+          "/60c8aaab54657b3c4296e938",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+          },
+          body: JSON.stringify(dataParam),
+        }
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          setData(json);
+          //console.log("Here is the psele" + JSON.stringify(json));
+          return json;
+        })
+        .catch((error) => {
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+          console.error("Product Selector error " + error);
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        })
+        .finally(() => setLoading(false));
+    } catch (e) {
+      console.log("error in reading data product list ");
+    }
+  };
+
   useEffect(() => {
-    getData();
+    // console.log("me here" + JSON.stringify(route.params.pselect));
+    var pselectenabled = typeof route.params != "undefined";
+    console.log("me here 3" + pselectenabled);
+    if (pselectenabled) {
+      console.log("me here" + JSON.stringify(route.params.pselect));
+      setDataParam(JSON.stringify(route.params.pselect));
+      getData2(JSON.stringify(route.params.pselect));
+    } else {
+      getData();
+    }
   }, []);
 
   var products: Product[] = data;

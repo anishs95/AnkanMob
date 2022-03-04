@@ -9,7 +9,10 @@ import {
 } from "../../components/icons";
 import ContentView from "../../layouts/ankan-ecommerce-layouts/product-list";
 
-export const ProductListScreen = ({ navigation }): React.ReactElement => {
+export const ProductListScreen = ({
+  navigation,
+  route,
+}): React.ReactElement => {
   const [bookmarked, setBookmarked] = React.useState<boolean>(false);
 
   const onBookmarkActionPress = (): void => {
@@ -34,7 +37,7 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
         accessoryLeft={renderBackAction}
         accessoryRight={renderBookmarkAction}
       />
-      <ContentView navigation={navigation} />
+      <ContentView navigation={navigation} route={route} />
     </SafeAreaLayout>
   );
 };

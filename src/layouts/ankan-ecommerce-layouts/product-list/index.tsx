@@ -35,8 +35,8 @@ const ProductsTabBar = ({ navigation, state }): React.ReactElement => {
 
 const TopTabs = createMaterialTopTabNavigator();
 
-export default ({ navigation }): React.ReactElement => (
-  <ProductListScreen navigation={navigation}></ProductListScreen>
+export default ({ navigation, route }): React.ReactElement => (
+  <ProductListScreen navigation={navigation} route={route}></ProductListScreen>
   // <TopTabs.Navigator tabBar={(props) => <ProductsTabBar {...props} />}>
   //   <TopTabs.Screen
   //     name="Product List"

@@ -72,7 +72,7 @@ export const ProductListScreen = ({
       };
       getFishAndChips();
     });
-    setLoading(false);
+
     return unsubscribe;
   }, []);
 
@@ -194,7 +194,7 @@ export const ProductListScreen = ({
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
         visible={isLoading}
-        textContent={"Products Loading..."}
+        textContent={"Order Details Loading..."}
         textStyle={styles.spinnerTextStyle}
       />
       <List

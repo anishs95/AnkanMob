@@ -15,10 +15,10 @@ import ModalDropdown from "react-native-modal-dropdown";
 export default ({ navigation }): React.ReactElement => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [temp, setTemp] = useState([]);
+  const [temp, setTemp] = useState({});
   const onBuyButtonPress = (): void => {
-    console.log(JSON);
-    navigation.navigate("ProductList", { catId: data });
+    console.log(JSON.stringify(temp));
+    navigation.navigate("ProductList", { pselect: temp });
   };
   useEffect(() => {
     fetch(
@@ -102,7 +102,10 @@ export default ({ navigation }): React.ReactElement => {
                         isFullWidth
                         textStyle={styles.dropdown_2_text}
                         onSelect={(index3, value3) => {
-                          temp[index] = value.typeCategory + ":" + (index3 + 1);
+                          //   alert(JSON.stringify(value.types[index3].priority));
+
+                          temp[value.typeCategory + "Id"] =
+                            value.types[index3].priority;
                         }}
                       />
                       {/* <DropDownPicker
