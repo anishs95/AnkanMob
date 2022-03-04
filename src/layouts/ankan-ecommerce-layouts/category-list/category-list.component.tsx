@@ -13,6 +13,8 @@ import {
   Text,
   useStyleSheet,
 } from "@ui-kitten/components";
+import Spinner from "react-native-loading-spinner-overlay";
+
 import PropTypes from "prop-types";
 
 import { CartIcon } from "./extra/icons";
@@ -153,12 +155,21 @@ export const CategoryListScreen = ({
   );
 
   return (
-    <List
-      contentContainerStyle={styles.productList}
-      data={(displayProducts.length && displayProducts) || products}
-      numColumns={2}
-      renderItem={renderProductItem}
-    />
+    <View>
+      <Spinner
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        size="large"
+        visible={isLoading}
+        textContent={"Product Category Loading..."}
+        textStyle={styles.spinnerTextStyle}
+      />
+      <List
+        contentContainerStyle={styles.productList}
+        data={(displayProducts.length && displayProducts) || products}
+        numColumns={2}
+        renderItem={renderProductItem}
+      />
+    </View>
   );
 };
 
@@ -194,5 +205,8 @@ const themedStyles = StyleService.create({
   title: {
     height: 45,
     textAlign: "left",
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });

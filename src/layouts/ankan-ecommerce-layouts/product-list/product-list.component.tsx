@@ -14,6 +14,7 @@ import {
   Text,
   useStyleSheet,
 } from "@ui-kitten/components";
+import Spinner from "react-native-loading-spinner-overlay";
 import { CartIcon } from "./extra/icons";
 import { Product } from "./extra/data2";
 
@@ -29,22 +30,28 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
   const getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("@categoryIDnumber");
+      const lcnId = await AsyncStorage.getItem("locationId");
       console.log("categoryIDnumber :- " + jsonValue);
       setcategoryIDnumber(jsonValue);
+
+      console.log("categoryIDnumber in use :- " + jsonValue);
+      fetch(
+        "https://api.dev.ankanchem.net/products/api/Product/GetAllProductsByCategory/" +
+          jsonValue +
+          "/" +
+          lcnId
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          setData(json);
+        })
+        .catch((error) => console.error("This error" + error))
+        .finally(() => setLoading(false));
     } catch (e) {
       console.log("error in reading data product list ");
     }
   };
   useEffect(() => {
-    fetch(
-      "https://api.dev.ankanchem.net/products/api/Product/GetAllProducts/" +
-        categoryIDnumber
-    )
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-
     getData();
   }, []);
 
@@ -114,12 +121,21 @@ export const ProductListScreen = ({ navigation }): React.ReactElement => {
   );
 
   return (
-    <List
-      contentContainerStyle={styles.productList}
-      data={products}
-      numColumns={2}
-      renderItem={renderProductItem}
-    />
+    <View>
+      <Spinner
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        size="large"
+        visible={isLoading}
+        textContent={"Products Loading..."}
+        textStyle={styles.spinnerTextStyle}
+      />
+      <List
+        contentContainerStyle={styles.productList}
+        data={products}
+        numColumns={2}
+        renderItem={renderProductItem}
+      />
+    </View>
   );
 };
 
@@ -156,5 +172,8 @@ const themedStyles = StyleService.create({
   title: {
     height: 40,
     textAlign: "left",
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });

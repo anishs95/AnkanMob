@@ -122,9 +122,7 @@ export default ({ navigation }): React.ReactElement => {
       0
     );
   };
-  function refreshPage() {
-    window.location.reload(false);
-  }
+
   const onItemRemove = (product: Product, index: number): void => {
     productss.splice(index, 1);
     setProducts([...productss]);

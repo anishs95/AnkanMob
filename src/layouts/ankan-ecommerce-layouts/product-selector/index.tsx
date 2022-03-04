@@ -76,6 +76,7 @@ export default ({ navigation }): React.ReactElement => {
               {data.map((value, index) => {
                 return (
                   <Card
+                    key={index}
                     style={styles.bookingCard}
                     appearance="filled"
                     disabled={true}
