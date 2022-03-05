@@ -6,10 +6,6 @@ import { ArrowIosBackIcon } from "../../components/icons";
 import ContentView from "../../layouts/ankan-ecommerce-layouts/product-selector";
 
 export const ProductSelector = ({ navigation }): React.ReactElement => {
-  const renderBackAction = (): React.ReactElement => (
-    <TopNavigationAction icon={ArrowIosBackIcon} onPress={navigation.goBack} />
-  );
-
   return (
     <SafeAreaLayout style={styles.container} insets="top">
       <ContentView navigation={navigation} />

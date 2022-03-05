@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
 import { ImageBackground, Platform, View } from "react-native";
 import { MinusIcon, PlusIcon } from "./icons";
+import Spinner from "react-native-loading-spinner-overlay";
 import {
   Button,
   Input,
@@ -35,6 +36,8 @@ export default ({ navigation, props }): React.ReactElement => {
   const [quantity, setQuantity] = React.useState<number>();
   const styles = useStyleSheet(themedStyles);
   const [userId, setUserId] = React.useState<string>();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
   const SECTIONS = [
     {
       title: "   Consumption Calculator +",
@@ -127,23 +130,11 @@ export default ({ navigation, props }): React.ReactElement => {
   }, []);
 
   // console.log("Item from parent about product is " + );
-  const onBuyButtonPress = (): void => {
-    addItemToBag();
-
-    const storeData = async (value) => {
-      try {
-        const jsonValue = JSON.stringify([value]);
-
-        await AsyncStorage.setItem("@cartDetails", jsonValue);
-        console.log("sucess in storing values of product cart" + jsonValue);
-      } catch (e) {
-        // saving error
-        console.log("failed in storing values of cart details" + e);
-      }
-    };
-    storeData(data);
+  const onCartButtonPress = (): void => {
+    navigation && navigation.navigate("ShoppingCart");
   };
   function addItemToBag() {
+    setIsLoading(true);
     fetch(
       "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userId +
@@ -167,7 +158,11 @@ export default ({ navigation, props }): React.ReactElement => {
       .then((response) => response.json())
       .then((json) => {
         console.log("[PRODUCT DETAILS add-cart response]" + json);
-        navigation && navigation.navigate("ShoppingCart");
+        setIsLoading(false);
+        Toast.show("Item added to the bag", Toast.LONG, [
+          "RCTModalHostViewController",
+        ]);
+        // navigation && navigation.navigate("ShoppingCart");
         return json;
       })
       .catch((error) => {
@@ -190,24 +185,6 @@ export default ({ navigation, props }): React.ReactElement => {
 
   const onAddButtonPress = (): void => {
     addItemToBag();
-
-    console.log("Product ID going to add in set " + data.id);
-    console.log("cart data " + JSON.stringify(cartData));
-    const mySet1 = new Set(cartData);
-
-    mySet1.add(data.id); // Set [ 1 ]
-    // mySet1.add(5); // Set [ 1, 5 ]
-    // mySet1.add(5);
-    AsyncStorage.setItem("@cartProductId", JSON.stringify(Array.from(mySet1)));
-    for (let item of mySet1.keys()) {
-      console.log("ittemsms :" + item);
-    }
-
-    AsyncStorage.setItem("@" + data.id, JSON.stringify([data]));
-
-    Toast.show("Item added to the bag", Toast.LONG, [
-      "RCTModalHostViewController",
-    ]);
   };
 
   const renderColorItem = (
@@ -302,9 +279,9 @@ export default ({ navigation, props }): React.ReactElement => {
             style={styles.actionButton}
             size="large"
             status="success"
-            onPress={onBuyButtonPress}
+            onPress={onCartButtonPress}
           >
-            BUY
+            CART
           </Button>
           <Button
             style={styles.actionButton}
@@ -323,6 +300,13 @@ export default ({ navigation, props }): React.ReactElement => {
         renderHeader={_renderHeader}
         renderContent={_renderContent}
         onChange={_updateSections}
+      />
+      <Spinner
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        size="large"
+        visible={isLoading}
+        textContent={"Processing..."}
+        textStyle={styles.spinnerTextStyle}
       />
       <Input
         style={styles.commentInput}
@@ -444,5 +428,8 @@ const themedStyles = StyleService.create({
   calBags: {
     marginHorizontal: 16,
     marginTop: 24,
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });

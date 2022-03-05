@@ -139,13 +139,15 @@ export const ProductListScreen = ({
     info: ListRenderItemInfo<Product>
   ): React.ReactElement => (
     <View style={styles.itemFooter}>
-      <Text category="h6">₹ {info.item.price}</Text>
-      <Button
+      <Text status="primary" category="h6">
+        ₹ {info.item.price}
+      </Text>
+      {/* <Button
         style={styles.iconButton}
         size="small"
         accessoryLeft={CartIcon}
         onPress={() => onItemCartPress(info.index)}
-      />
+      /> */}
     </View>
   );
 

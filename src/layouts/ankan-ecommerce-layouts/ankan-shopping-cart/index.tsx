@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Component } from "react";
 import {
   ListRenderItemInfo,
   View,
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
+  BackHandler,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -27,7 +29,7 @@ export default ({ navigation }): React.ReactElement => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [cartData, setCartData] = useState([]);
-  const [productss, setProducts] = useState<Product[]>();
+  const [productss, setProducts] = useState<Product[]>([]);
   const [usrID, setUsrID] = useState<string>();
 
   const componentMounted = useRef(true);
@@ -73,7 +75,15 @@ export default ({ navigation }): React.ReactElement => {
       )
         .then((response) => response.json())
         .then((json) => {
-          setItems(json.items);
+          console.log("Lengthss123");
+
+          if (json.items == null) {
+            // alert("Sas");
+            setItems([]);
+          } else {
+            setItems(json.items);
+          }
+
           setData(json);
         })
         .catch((error) => console.error("error" + error))
@@ -97,7 +107,7 @@ export default ({ navigation }): React.ReactElement => {
           value.categoryId,
           value.productName,
           value.description,
-          value.itemTotal,
+          value.unitPrice,
           value.quantity,
           value.unit,
           value.colors,
@@ -109,6 +119,22 @@ export default ({ navigation }): React.ReactElement => {
       console.log("return " + productss);
     }, 1000); //run this after 3 seconds
 
+    const backAction = () => {
+      navigation.goBack();
+      // Alert.alert("Hold on!", "Are you sure you want to go back?", [
+      //   {
+      //     text: "Cancel",
+      //     onPress: () => null,
+      //     style: "cancel",
+      //   },
+      //   { text: "YES", onPress: () => BackHandler.exitApp() },
+      // ]);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
     return () => {
       // This code runs when component is unmounted
       componentMounted.current = false; // (4) set it to false when we leave the page
@@ -170,7 +196,8 @@ export default ({ navigation }): React.ReactElement => {
   const renderFooter = (): React.ReactElement => (
     <Layout style={styles.footer}>
       <Text category="h5">Total Cost:</Text>
-      <Text category="h5">{data.totalAmount}</Text>
+      {/* <Text category="h5">{data.totalAmount}</Text> */}
+      <Text category="h5">{`₹${totalCost()}`}</Text>
     </Layout>
   );
 

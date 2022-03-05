@@ -69,7 +69,7 @@ export default ({ navigation }): React.ReactElement => {
           activationSecret
       );
 
-      fetch(" https://admin.dev.ankanchem.net/auth/api/Authentication", {
+      fetch("https://admin.dev.ankanchem.net/auth/api/Authentication", {
         method: "POST",
         headers: {
           Accept: "application/json",

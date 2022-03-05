@@ -3,6 +3,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Button, ListItem, ListItemProps, Text } from "@ui-kitten/components";
 import { CloseIcon, MinusIcon, PlusIcon } from "./icons";
 import { Product } from "./data2";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type CartItemProps = ListItemProps & {
   index: number;
@@ -23,6 +24,58 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
     onRemove(product, index);
   };
 
+  const [userId, setUserId] = React.useState<string>();
+
+  function updateItem(x) {
+    AsyncStorage.getItem("userId", (err, res) => {
+      if (!res) {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log("USER ID is Not found");
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      } else {
+        console.log("USER ID " + JSON.parse(res));
+        setUserId(JSON.parse(res));
+        addItemToBag(x, JSON.parse(res));
+      }
+    });
+  }
+
+  function addItemToBag(x, userIds) {
+    fetch(
+      "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+        userIds +
+        "/" +
+        "location",
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+        },
+        body: JSON.stringify({
+          ProductId: product.id,
+          ProductName: product.name,
+          Quantity: x,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(
+          "[PRODUCT DETAILS add-cart updated response]" + JSON.stringify(json)
+        );
+
+        // navigation && navigation.navigate("ShoppingCart");
+        return json;
+      })
+      .catch((error) => {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.error("Add Cart error " + error);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      });
+  }
   const onMinusButtonPress = (): void => {
     const updatedProduct: Product = new Product(
       product.id,
@@ -35,7 +88,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
       product.colors,
       product.imageUrl
     );
-
+    updateItem(-1);
     onProductChange(updatedProduct, index);
   };
 
@@ -51,7 +104,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
       product.colors,
       product.imageUrl
     );
-
+    updateItem(1);
     onProductChange(updatedProduct, index);
   };
 
@@ -63,7 +116,7 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
         <Text appearance="hint" category="p2">
           {/* {product.description.substring(1, 140)} */}
         </Text>
-        <Text category="s2">{product.formattedPrice}</Text>
+        <Text category="s2">₹{product.formattedPrice}</Text>
         <View style={styles.amountContainer}>
           <Button
             style={[styles.iconButton, styles.amountButton]}

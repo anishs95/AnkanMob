@@ -5,7 +5,7 @@ import { SafeAreaLayout } from "../../components/safe-area-layout.component";
 import {
   ArrowIosBackIcon,
   BookmarkIcon,
-  BookmarkOutlineIcon,
+  ShopingCartIcon,
 } from "../../components/icons";
 import ContentView from "../../layouts/ankan-ecommerce-layouts/product-details";
 
@@ -14,6 +14,7 @@ export const ProductDetailsScreen = ({ navigation }): React.ReactElement => {
 
   const onBookmarkActionPress = (): void => {
     setBookmarked(!bookmarked);
+    navigation && navigation.navigate("ShoppingCart");
   };
 
   const renderBackAction = (): React.ReactElement => (
@@ -22,7 +23,7 @@ export const ProductDetailsScreen = ({ navigation }): React.ReactElement => {
 
   const renderBookmarkAction = (): React.ReactElement => (
     <TopNavigationAction
-      icon={bookmarked ? BookmarkIcon : BookmarkOutlineIcon}
+      icon={bookmarked ? ShopingCartIcon : ShopingCartIcon}
       onPress={onBookmarkActionPress}
     />
   );

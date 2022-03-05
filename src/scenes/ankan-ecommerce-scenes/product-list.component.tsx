@@ -6,6 +6,7 @@ import {
   ArrowIosBackIcon,
   BookmarkIcon,
   BookmarkOutlineIcon,
+  ShopingCartIcon,
 } from "../../components/icons";
 import ContentView from "../../layouts/ankan-ecommerce-layouts/product-list";
 
@@ -17,6 +18,7 @@ export const ProductListScreen = ({
 
   const onBookmarkActionPress = (): void => {
     setBookmarked(!bookmarked);
+    navigation && navigation.navigate("ShoppingCart");
   };
 
   const renderBackAction = (): React.ReactElement => (
@@ -25,7 +27,7 @@ export const ProductListScreen = ({
 
   const renderBookmarkAction = (): React.ReactElement => (
     <TopNavigationAction
-      icon={bookmarked ? BookmarkIcon : BookmarkOutlineIcon}
+      icon={bookmarked ? ShopingCartIcon : ShopingCartIcon}
       onPress={onBookmarkActionPress}
     />
   );

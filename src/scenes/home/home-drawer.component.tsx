@@ -10,7 +10,11 @@ import {
   Text,
   IndexPath,
 } from "@ui-kitten/components";
-import { BookIcon, GithubIcon } from "../../components/icons";
+import {
+  BookIcon,
+  GithubIcon,
+  AssetEcommerceIcon,
+} from "../../components/icons";
 import { SafeAreaLayout } from "../../components/safe-area-layout.component";
 import { AppInfoService } from "../../services/app-info.service";
 
@@ -20,33 +24,33 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
   const [selectedIndex, setSelectedIndex] = useState<IndexPath>(null);
 
   const DATA = [
-    {
-      title: "Product Selector",
-      icon: GithubIcon,
-      onPress: () => {
-        navigation.toggleDrawer();
-        navigation.navigate("ProductSelector");
-      },
-    },
-    {
-      title: "Rewards",
-      icon: GithubIcon,
-      onPress: () => {
-        navigation.toggleDrawer();
-        navigation.navigate("Rewards");
-      },
-    },
-    {
-      title: "Offers",
-      icon: GithubIcon,
-      onPress: () => {
-        navigation.toggleDrawer();
-        navigation.navigate("Offers");
-      },
-    },
+    // {
+    //   title: "Product Selector",
+    //   icon: BookIcon,
+    //   onPress: () => {
+    //     navigation.toggleDrawer();
+    //     navigation.navigate("ProductSelector");
+    //   },
+    // },
+    // {
+    //   title: "Rewards",
+    //   icon: GithubIcon,
+    //   onPress: () => {
+    //     navigation.toggleDrawer();
+    //     navigation.navigate("Rewards");
+    //   },
+    // },
+    // {
+    //   title: "Offers",
+    //   icon: GithubIcon,
+    //   onPress: () => {
+    //     navigation.toggleDrawer();
+    //     navigation.navigate("Offers");
+    //   },
+    // },
     {
       title: "Orders",
-      icon: GithubIcon,
+      icon: BookIcon,
       onPress: () => {
         navigation.toggleDrawer();
         navigation.navigate("Orders");

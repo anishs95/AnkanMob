@@ -15,7 +15,7 @@ import {
 import { CreditCardIcon, MoreVerticalIcon } from "./extra/icons";
 import { PaymentCard, Address } from "./extra/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Spinner from "react-native-loading-spinner-overlay";
 const paymentCards: PaymentCard[] = [PaymentCard.emilyClarckVisa()];
 
 export default ({ navigation }): React.ReactElement => {
@@ -31,7 +31,8 @@ export default ({ navigation }): React.ReactElement => {
   const [items, setItems] = React.useState([]);
   const [userId, setUserId] = React.useState<string>();
   const [locationId, setLocationId] = React.useState<string>();
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const [addressDetails, setAddressDetails] = React.useState([]);
 
   const options: string[] = ["Option 1", "Option 2", "Option 3"];
@@ -82,6 +83,40 @@ export default ({ navigation }): React.ReactElement => {
     }
   };
 
+  const clearCart = async () => {
+    console.log("Cart clearing Success " + JSON.parse(userId));
+    try {
+      fetch(
+        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
+          JSON.parse(userId),
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+          },
+          body: JSON.stringify({}),
+        }
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          console.log("Cart clearing Success ");
+          navigation && navigation.navigate("Category");
+          return json;
+        })
+        .catch((error) => {
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+          console.error("Cart clearing error " + error);
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        })
+        .finally(() => setIsLoading(false));
+    } catch (e) {
+      console.log("error in clearing cart ");
+    }
+  };
+
   const getUserIdAndLocationId = async () => {
     try {
       const usrId = await AsyncStorage.getItem("userId");
@@ -118,6 +153,7 @@ export default ({ navigation }): React.ReactElement => {
   }, [navigation]);
 
   const onBuyButtonPress = (): void => {
+    setIsLoading(true);
     console.log("ON BUY BUTTON FINAL PRESS////////////////////");
     console.log(addressDetails);
     console.log(items);
@@ -148,6 +184,8 @@ export default ({ navigation }): React.ReactElement => {
       .then((response) => response.json())
       .then((json) => {
         console.log(JSON.stringify(json));
+        getUserIdAndLocationId();
+        clearCart();
         return json;
       })
       .catch((error) => {
@@ -155,8 +193,6 @@ export default ({ navigation }): React.ReactElement => {
         console.error("FAILED IN PLACING ORDER error " + error);
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       });
-
-    navigation && navigation.goBack();
   };
 
   const onPlaceholderCardPress = (): void => {
@@ -272,6 +308,13 @@ export default ({ navigation }): React.ReactElement => {
         renderItem={renderCardItem2}
         // ListFooterComponent={renderFooter}
       />
+      <Spinner
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        size="large"
+        visible={isLoading}
+        textContent={"Placing Order..."}
+        textStyle={styles.spinnerTextStyle}
+      />
       <RadioGroup selectedIndex={selectedIndex}>
         {options.map((el, index) => (
           <Radio key={index}>
@@ -357,5 +400,8 @@ const themedStyles = StyleService.create({
     bottom: 0,
     paddingHorizontal: 16,
     paddingVertical: 24,
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });

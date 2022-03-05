@@ -13,8 +13,8 @@ export class Product {
     readonly imageUrl: string
   ) {}
 
-  get formattedPrice(): string {
-    return `₹${this.price}`;
+  get formattedPrice(): number {
+    return this.price * this.quantity;
   }
 
   get totalPrice(): number {
