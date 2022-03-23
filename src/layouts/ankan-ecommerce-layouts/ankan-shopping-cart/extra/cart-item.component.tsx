@@ -1,6 +1,12 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, ListItem, ListItemProps, Text } from "@ui-kitten/components";
+import {
+  Button,
+  ListItem,
+  ListItemProps,
+  Text,
+  Input,
+} from "@ui-kitten/components";
 import { CloseIcon, MinusIcon, PlusIcon } from "./icons";
 import { Product } from "./data2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,7 +21,7 @@ export type CartItemProps = ListItemProps & {
 export const CartItem = (props: CartItemProps): React.ReactElement => {
   const { style, product, index, onProductChange, onRemove, ...listItemProps } =
     props;
-
+  const [quantityx, setQuantityx] = React.useState<string>();
   const decrementButtonEnabled = (): boolean => {
     return product.quantity > 1;
   };
@@ -107,7 +113,24 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
     updateItem(1);
     onProductChange(updatedProduct, index);
   };
-
+  const setQuantity = (): void => {
+    let qua = parseInt(quantityx) - product.quantity;
+    if (parseInt(quantityx) > 0) {
+      const updatedProduct: Product = new Product(
+        product.id,
+        product.categoryId,
+        product.name,
+        product.description,
+        product.price,
+        parseInt(quantityx),
+        product.unit,
+        product.colors,
+        product.imageUrl
+      );
+      updateItem(qua);
+      onProductChange(updatedProduct, index);
+    }
+  };
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
       <Image style={styles.image} source={{ uri: product.imageUrl }} />
@@ -125,9 +148,17 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
             onPress={onMinusButtonPress}
             disabled={!decrementButtonEnabled()}
           />
-          <Text style={styles.amount} category="s2">
+          {/* <Text style={styles.amount} category="s2">
             {`${product.quantity}`}
-          </Text>
+          </Text> */}
+          <Input
+            style={styles.amount2}
+            keyboardType="number-pad"
+            onChangeText={setQuantityx}
+            onBlur={setQuantity}
+          >
+            {product.quantity}
+          </Input>
           <Button
             style={[styles.iconButton, styles.amountButton]}
             size="tiny"
@@ -174,6 +205,10 @@ const styles = StyleSheet.create({
   amount: {
     textAlign: "center",
     width: 40,
+  },
+  amount2: {
+    marginLeft: 10,
+    marginRight: 10,
   },
   removeButton: {
     position: "absolute",

@@ -49,7 +49,7 @@ export const CategoryListScreen = ({
       };
 
       await fetch(
-        "https://api.dev.ankanchem.net/products/api/Product/GetProductCategories",
+        "https://api.dev.ankanchem.net/products/api/Product/GetAllProductCategories",
         {
           method: "GET",
           headers: {

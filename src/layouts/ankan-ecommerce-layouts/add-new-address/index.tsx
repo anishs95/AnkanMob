@@ -142,7 +142,7 @@ export default ({ navigation }): React.ReactElement => {
       </Layout>
       <Divider />
       <Button style={styles.addButton} size="giant" onPress={onAddButtonPress}>
-        ADD NEW CARD
+        ADD ADDRESS
       </Button>
     </KeyboardAvoidingView>
   );

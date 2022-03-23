@@ -121,6 +121,7 @@ export default ({ navigation }): React.ReactElement => {
 
     const backAction = () => {
       navigation.goBack();
+      // Alert.alert(JSON.stringify(data));
       // Alert.alert("Hold on!", "Are you sure you want to go back?", [
       //   {
       //     text: "Cancel",
@@ -189,6 +190,7 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const onItemChange = (product: Product, index: number): void => {
+    // alert(JSON.stringify(product));
     productss[index] = product;
     setProducts([...productss]);
   };

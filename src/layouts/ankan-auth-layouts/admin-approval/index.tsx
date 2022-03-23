@@ -51,55 +51,63 @@ export default ({ navigation }): React.ReactElement => {
         console.warn("userName id is empty");
       } else {
         setActivationSecret(JSON.parse(res));
+
         console.info("user id fetched " + res);
       }
     });
   }, []);
 
   var ShowAlertWithDelay = () => {
-    setTimeout(function () {
-      console.log(
-        "Fetching Bearer token with " +
-          id +
-          " " +
-          userName +
-          " " +
-          activationId +
-          " " +
-          activationSecret
-      );
+    AsyncStorage.setItem("adminApproval", "true");
+    console.log(
+      "Fetching Bearer token with " +
+        id +
+        " " +
+        userName +
+        " " +
+        activationId +
+        " " +
+        activationSecret
+    );
 
-      fetch("https://admin.dev.ankanchem.net/auth/api/Authentication", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
-        },
-        body: JSON.stringify({
-          id: id,
-          userName: userName,
-          activationId: activationId,
-          activationSecret: activationSecret,
-        }),
+    fetch("https://admin.dev.ankanchem.net/auth/api/Authentication", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer 1234",
+      },
+      body: JSON.stringify({
+        id: id,
+        userName: userName,
+        activationId: activationId,
+        activationSecret: activationSecret,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.isActive == "true") {
+          AsyncStorage.setItem("screenState", "two");
+          navigation && navigation.navigate("Home");
+        } else {
+          AsyncStorage.setItem("screenState", "one");
+          alert("No Access granted, Contact Ankan Admin");
+        }
+        //  setIsPhoneVarified = json.isActive;
+        console.log(json);
+        //  AsyncStorage.setItem("bearerTocken", JSON.stringify(json.token));
+        return json;
       })
-        .then((response) => response.json())
-        .then((json) => {
-          setIsPhoneVarified = json.isActive;
-          console.log("Authentication Tocken " + JSON.stringify(json));
-          AsyncStorage.setItem("bearerTocken", JSON.stringify(json.token));
-          return json;
-        })
-        .catch((error) => {
-          console.info("error in authentication tocken api " + error);
-        });
-    }, 3000);
+      .catch((error) => {
+        alert("Something went wrong");
+        AsyncStorage.setItem("screenState", "two");
+        navigation && navigation.navigate("Home");
+        console.info("error in authentication tocken api " + error);
+      });
+    setTimeout(function () {}, 3000);
 
     console.log("Got Access Key");
   };
-
-  ShowAlertWithDelay();
 
   const styles = useStyleSheet(themedStyles);
 
@@ -138,7 +146,7 @@ export default ({ navigation }): React.ReactElement => {
               appearance="ghost"
               status="control"
               size="giant"
-              onPress={onGrantAccess}
+              onPress={ShowAlertWithDelay}
             >
               GET STARTED
             </Button>

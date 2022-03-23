@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
-import { ImageBackground, Platform, View } from "react-native";
+import { ImageBackground, Platform, View, ScrollView } from "react-native";
 import { MinusIcon, PlusIcon } from "./icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
@@ -32,11 +32,13 @@ export default ({ navigation, props }): React.ReactElement => {
   const [cartData, setCartData] = useState([]);
   const [areaSqFt, setAreaSqFt] = React.useState<string>();
   const [noOfBags, setNoOfBags] = React.useState<string>();
+  const [disclaimer, setDisclaimer] = React.useState<string>();
   const [selectedColorIndex, setSelectedColorIndex] = React.useState<number>();
-  const [quantity, setQuantity] = React.useState<number>();
+  const [quantity, setQuantity] = React.useState<string>();
   const styles = useStyleSheet(themedStyles);
   const [userId, setUserId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [locationId, setLocationId] = React.useState<string>();
 
   const SECTIONS = [
     {
@@ -81,6 +83,9 @@ export default ({ navigation, props }): React.ReactElement => {
         <Text style={styles.result} category="h2">
           {noOfBags}
         </Text>
+        <Text style={styles.disclaimer} status={"danger"} category="h2">
+          {disclaimer}
+        </Text>
         {/* <Text>{section.content}</Text> */}
       </View>
     );
@@ -97,7 +102,7 @@ export default ({ navigation, props }): React.ReactElement => {
       console.log("PRODUCT DETAILS :- " + jsonValue);
       const val = jsonValue != null ? JSON.parse(jsonValue) : null;
       setData(val);
-      setQuantity(1);
+      setQuantity("1");
       console.log(
         "[PRODUCT DETAILS] Item from parent about product is " + val.id
       );
@@ -126,6 +131,16 @@ export default ({ navigation, props }): React.ReactElement => {
         setUserId(JSON.parse(res));
       }
     });
+    AsyncStorage.getItem("locationId", (err, res) => {
+      if (!res) {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log("location ID is Not found");
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      } else {
+        console.log("location ID " + res);
+        setLocationId(res);
+      }
+    });
     getData();
   }, []);
 
@@ -135,11 +150,17 @@ export default ({ navigation, props }): React.ReactElement => {
   };
   function addItemToBag() {
     setIsLoading(true);
+    //alert(JSON.stringify(data.colors[selectedColorIndex]));
+    let color = null;
+    // alert(typeof selectedColorIndex != "undefined");
+    if (typeof selectedColorIndex != "undefined") {
+      color = data.colors[selectedColorIndex];
+    }
     fetch(
       "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userId +
         "/" +
-        "location",
+        locationId,
       {
         method: "PUT",
         headers: {
@@ -151,7 +172,9 @@ export default ({ navigation, props }): React.ReactElement => {
         body: JSON.stringify({
           ProductId: data.id,
           ProductName: data.name,
-          Quantity: quantity,
+          Quantity: parseInt(quantity),
+          Color: color,
+          unit: data.unit,
         }),
       }
     )
@@ -169,6 +192,7 @@ export default ({ navigation, props }): React.ReactElement => {
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.error("Add Cart error " + error);
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        setIsLoading(false);
       });
   }
   const onCalculateButtonPress = (): void => {
@@ -179,12 +203,19 @@ export default ({ navigation, props }): React.ReactElement => {
         areaSqFt
     )
       .then((response) => response.json())
-      .then((json) => setNoOfBags(json + " bags"))
+      .then((json) => {
+        setNoOfBags(json + " bags");
+        setDisclaimer("** May very with the p.selector");
+      })
       .catch((error) => console.error(error));
   };
 
   const onAddButtonPress = (): void => {
-    addItemToBag();
+    if (parseInt(quantity) > 0) {
+      addItemToBag();
+    } else {
+      alert("Invalid quantity Choosen");
+    }
   };
 
   const renderColorItem = (
@@ -201,28 +232,34 @@ export default ({ navigation, props }): React.ReactElement => {
   );
   const onMinusButtonPress = (): void => {
     {
-      setQuantity(quantity - 1);
+      setQuantity((parseInt(quantity) - 1).toString());
       console.log("[PRODUCT DETAILS] " + quantity);
     }
   };
   const onPlusButtonPress = (): void => {
     {
-      setQuantity(quantity + 1);
+      setQuantity((parseInt(quantity) + 1).toString());
       console.log("[PRODUCT DETAILS] " + quantity);
     }
   };
 
   const decrementButtonEnabled = (): boolean => {
-    return quantity > 1;
+    return parseInt(quantity) > 1;
+  };
+
+  const checkNumber = (e): void => {
+    if (e > 0) {
+      setQuantity(e);
+    } else if (e != " ") {
+      // setQuantity(Math.abs(parseInt(e)).toString());
+    }
   };
   const renderHeader = (): React.ReactElement => (
     <Layout style={styles.header}>
       <ImageBackground style={styles.image} source={{ uri: data.imageUri }} />
       <Layout style={styles.detailsContainer} level="1">
         <Text category="h6">{data.name}</Text>
-        <Text style={styles.subtitle} appearance="hint" category="p2">
-          {data.description}
-        </Text>
+
         <Text style={styles.price} category="h4">
           ₹ {data.price}
         </Text>
@@ -236,21 +273,31 @@ export default ({ navigation, props }): React.ReactElement => {
         <Text style={styles.size} appearance="hint">
           {data.quantity}
         </Text>
+        <Text style={styles.sectionLabel} category="h6">
+          Unit:
+        </Text>
 
+        <Text style={styles.size} appearance="hint">
+          {data.unit}
+        </Text>
         <Text style={styles.sectionLabel} category="h6">
           Color:
         </Text>
-        <RadioGroup
-          style={styles.colorGroup}
-          selectedIndex={selectedColorIndex}
-          onChange={setSelectedColorIndex}
-        >
-          {(() => {
-            if (data.colors != null) {
-              return data.colors.map(renderColorItem);
-            }
-          })()}
-        </RadioGroup>
+        <View>
+          <ScrollView horizontal={true}>
+            <RadioGroup
+              style={styles.colorGroup}
+              selectedIndex={selectedColorIndex}
+              onChange={setSelectedColorIndex}
+            >
+              {(() => {
+                if (data.colors != null) {
+                  return data.colors.map(renderColorItem);
+                }
+              })()}
+            </RadioGroup>
+          </ScrollView>
+        </View>
         <View style={styles.sectionLabelRev}>
           <Text style={styles.sectionLabel} category="h6">
             Quantity:
@@ -264,9 +311,13 @@ export default ({ navigation, props }): React.ReactElement => {
             onPress={onMinusButtonPress}
             disabled={!decrementButtonEnabled()}
           />
-          <Text style={styles.amount} category="s2">
+          <Input
+            style={styles.amount}
+            keyboardType="numeric"
+            onChangeText={setQuantity}
+          >
             {quantity}
-          </Text>
+          </Input>
           <Button
             style={[styles.iconButton, styles.amountButton]}
             size="tiny"
@@ -307,17 +358,6 @@ export default ({ navigation, props }): React.ReactElement => {
         visible={isLoading}
         textContent={"Processing..."}
         textStyle={styles.spinnerTextStyle}
-      />
-      <Input
-        style={styles.commentInput}
-        label={(evaProps) => (
-          <Text {...evaProps} style={styles.commentInputLabel}>
-            Comments
-          </Text>
-        )}
-        placeholder="Write your comment"
-        value={comment}
-        onChangeText={setComment}
       />
     </Layout>
   );
@@ -379,6 +419,13 @@ const themedStyles = StyleService.create({
     top: 24,
     margin: 6,
   },
+  disclaimer: {
+    margin: 6,
+    marginBottom: 36,
+    top: 14,
+    bottom: 24,
+    fontSize: 12,
+  },
   description: {
     marginVertical: 16,
   },
@@ -418,12 +465,12 @@ const themedStyles = StyleService.create({
     marginVertical: 24,
   },
   iconButton: {
-    paddingHorizontal: 0,
+    paddingHorizontal: 8,
     marginLeft: 10,
     marginright: 10,
   },
   amountButton: {
-    borderRadius: 16,
+    borderRadius: 36,
   },
   calBags: {
     marginHorizontal: 16,
