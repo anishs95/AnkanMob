@@ -47,12 +47,9 @@ export default ({ navigation }): React.ReactElement => {
       })
         .then((response) => response.json())
         .then((json) => {
-          alert(JSON.stringify(json));
-          AsyncStorage.setItem(
-            "activationId",
-            JSON.stringify(json.activationId)
-          );
-          AsyncStorage.setItem("userId", JSON.stringify(json.userId));
+          //  alert(JSON.stringify(json));
+          AsyncStorage.setItem("activationId", json.activationId);
+          AsyncStorage.setItem("userId", json.userId);
           AsyncStorage.setItem("locationId", locationId);
           navigation && navigation.navigate("OtpScreen");
           // setData(json);
@@ -66,7 +63,8 @@ export default ({ navigation }): React.ReactElement => {
     }
   };
   const register = (): void => {
-    navigation.goBack();
+    AsyncStorage.setItem("screenState", "nine");
+    navigation.navigate("Registration2");
   };
   return (
     <KeyboardAvoidingView style={styles.container}>

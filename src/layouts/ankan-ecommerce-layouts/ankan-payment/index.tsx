@@ -84,25 +84,22 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const clearCart = async () => {
-    console.log("Cart clearing Success " + JSON.parse(userId));
+    console.log("Cart clearing Success " + userId);
     try {
-      fetch(
-        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
-          JSON.parse(userId),
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
-          },
-          body: JSON.stringify({}),
-        }
-      )
+      fetch("https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" + userId, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+        },
+        body: JSON.stringify({}),
+      })
         .then((response) => response.json())
         .then((json) => {
           console.log("Cart clearing Success ");
+          alert("Successfully Placed Order");
           navigation && navigation.navigate("Category");
           return json;
         })
@@ -123,12 +120,9 @@ export default ({ navigation }): React.ReactElement => {
       const lcnId = await AsyncStorage.getItem("locationId");
       setUserId(usrId);
       setLocationId(lcnId);
-      getCartDetails(JSON.parse(usrId), lcnId);
+      getCartDetails(usrId, lcnId);
       console.log(
-        "User Id  and lcn id in Payment Screen " +
-          JSON.parse(usrId) +
-          " loc --> " +
-          lcnId
+        "User Id  and lcn id in Payment Screen " + usrId + " loc --> " + lcnId
       );
     } catch (e) {
       console.log("error in reading data ");
@@ -158,7 +152,7 @@ export default ({ navigation }): React.ReactElement => {
     console.log(addressDetails);
     console.log(items);
     console.log(locationId);
-    console.log(JSON.parse(userId));
+    console.log(userId);
 
     fetch("https://api.dev.ankanchem.net/purchase/api/Purchase/PlaceOrder", {
       method: "POST",
@@ -169,7 +163,7 @@ export default ({ navigation }): React.ReactElement => {
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
       },
       body: JSON.stringify({
-        UserId: JSON.parse(userId),
+        UserId: userId,
         LocationId: locationId,
         Items: items,
         BillingAddress: addressDetails,
@@ -183,7 +177,7 @@ export default ({ navigation }): React.ReactElement => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(JSON.stringify(json));
+        console.log(json);
         getUserIdAndLocationId();
         clearCart();
         return json;

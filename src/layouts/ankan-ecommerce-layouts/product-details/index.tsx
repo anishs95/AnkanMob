@@ -68,6 +68,7 @@ export default ({ navigation, props }): React.ReactElement => {
         <Input
           placeholder="in sq.feet"
           label="Area"
+          keyboardType="numeric"
           autoCapitalize="words"
           value={areaSqFt}
           onChangeText={setAreaSqFt}
@@ -127,8 +128,8 @@ export default ({ navigation, props }): React.ReactElement => {
         console.log("USER ID is Not found");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        console.log("USER ID " + JSON.parse(res));
-        setUserId(JSON.parse(res));
+        console.log("USER ID " + res);
+        setUserId(res);
       }
     });
     AsyncStorage.getItem("locationId", (err, res) => {
@@ -204,8 +205,9 @@ export default ({ navigation, props }): React.ReactElement => {
     )
       .then((response) => response.json())
       .then((json) => {
+        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
         setNoOfBags(json + " bags");
-        setDisclaimer("** May very with the p.selector");
+        setDisclaimer("** May vary with the p.selector");
       })
       .catch((error) => console.error(error));
   };

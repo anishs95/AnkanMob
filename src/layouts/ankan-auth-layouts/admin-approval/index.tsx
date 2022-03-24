@@ -20,13 +20,24 @@ export default ({ navigation }): React.ReactElement => {
   const [activationSecret, setActivationSecret] = React.useState<string>();
   const [id, setId] = React.useState<string>();
   const [userName, setUserName] = React.useState<string>();
+  var [userId, setUserId] = React.useState<string>();
 
   useEffect(() => {
+    AsyncStorage.getItem("userId", (err, res) => {
+      if (!res) {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log("USER ID is Not found");
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      } else {
+        console.log("USER ID " + res);
+        setUserId(res);
+      }
+    });
     AsyncStorage.getItem("id", (err, res) => {
       if (!res) {
         console.warn("id is empty");
       } else {
-        setId(JSON.parse(res));
+        setId(res);
         console.info("activation id fetched " + res);
       }
     });
@@ -34,7 +45,7 @@ export default ({ navigation }): React.ReactElement => {
       if (!res) {
         console.warn("user id is empty");
       } else {
-        setUserName(JSON.parse(res));
+        setUserName(res);
         console.info("user id fetched " + res);
       }
     });
@@ -42,7 +53,7 @@ export default ({ navigation }): React.ReactElement => {
       if (!res) {
         console.warn("activation id is empty");
       } else {
-        setActivationId(JSON.parse(res));
+        setActivationId(res);
         console.info("activation id fetched " + res);
       }
     });
@@ -50,7 +61,7 @@ export default ({ navigation }): React.ReactElement => {
       if (!res) {
         console.warn("userName id is empty");
       } else {
-        setActivationSecret(JSON.parse(res));
+        setActivationSecret(res);
 
         console.info("user id fetched " + res);
       }
@@ -61,7 +72,7 @@ export default ({ navigation }): React.ReactElement => {
     AsyncStorage.setItem("adminApproval", "true");
     console.log(
       "Fetching Bearer token with " +
-        id +
+        userId +
         " " +
         userName +
         " " +
@@ -70,60 +81,94 @@ export default ({ navigation }): React.ReactElement => {
         activationSecret
     );
 
-    fetch("https://admin.dev.ankanchem.net/auth/api/Authentication", {
+    fetch("https://api.dev.ankanchem.net/users/api/User/VerifyOTP", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: "Bearer 1234",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
       },
       body: JSON.stringify({
-        id: id,
-        userName: userName,
         activationId: activationId,
-        activationSecret: activationSecret,
+        userId: userId,
+        otp: "1111",
       }),
     })
       .then((response) => response.json())
       .then((json) => {
-        if (json.isActive == "true") {
-          AsyncStorage.setItem("screenState", "two");
-          navigation && navigation.navigate("Home");
-        } else {
+        // alert("in admin screen " + JSON.stringify(json));
+        if (json.isPhoneVarified) {
+          //  alert("in admin screen " + JSON.stringify(json));
+
+          //  alert("in admin screen " + JSON.stringify(json));
+
+          // AsyncStorage.setItem("id", JSON.stringify(json.id));
+          // AsyncStorage.setItem("userName", JSON.stringify(json.userName));
+          // // AsyncStorage.setItem(
+          //   "activationId",
+          //   JSON.stringify(json.activationId)
+          // );
+          // AsyncStorage.setItem(
+          //   "activationSecret",
+          //   JSON.stringify(json.activationSecret)
+          // );
           AsyncStorage.setItem("screenState", "one");
-          alert("No Access granted, Contact Ankan Admin");
+          // navigation && navigation.navigate("AdminApproval");
+          // setIsLoading(false);
+        } else {
+          alert("Invalid OTP Entered!! Try Again");
+          // setIsLoading(false);
         }
-        //  setIsPhoneVarified = json.isActive;
-        console.log(json);
-        //  AsyncStorage.setItem("bearerTocken", JSON.stringify(json.token));
         return json;
       })
       .catch((error) => {
-        alert("Something went wrong");
-        AsyncStorage.setItem("screenState", "two");
-        navigation && navigation.navigate("Home");
-        console.info("error in authentication tocken api " + error);
+        console.error(error);
       });
-    setTimeout(function () {}, 3000);
+    // fetch("https://admin.dev.ankanchem.net/auth/api/Authentication", {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //     Authorization: "Bearer 1234",
+    //   },
+    //   body: JSON.stringify({
+    //     id: id,
+    //     userName: userName,
+    //     activationId: activationId,
+    //     activationSecret: activationSecret,
+    //   }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     if (json.isActive == "true") {
+    //       AsyncStorage.setItem("screenState", "two");
+    //       navigation && navigation.navigate("Home");
+    //     } else {
+    //       AsyncStorage.setItem("screenState", "one");
+    //       alert("No Access granted, Contact Ankan Admin");
+    //     }
+    //     //  setIsPhoneVarified = json.isActive;
+    //     console.log(json);
+    //     //  AsyncStorage.setItem("bearerTocken", JSON.stringify(json.token));
+    //     return json;
+    //   })
+    //   .catch((error) => {
+    //     alert("Something went wrong");
+    //     AsyncStorage.setItem("screenState", "two");
+    //     navigation && navigation.navigate("Home");
+    //     console.info("error in authentication tocken api " + error);
+    //   });
+    // setTimeout(function () {}, 3000);
 
     console.log("Got Access Key");
   };
 
   const styles = useStyleSheet(themedStyles);
 
-  const onGrantAccess = (): void => {
-    AsyncStorage.getItem("bearerTocken", (err, res) => {
-      if (!res) {
-        console.log("bearerTocken id is empty");
-      } else {
-        console.log("bearerTocken fetched " + res);
-      }
-    });
-    if (!isPhoneVarified) {
-      navigation && navigation.navigate("Home");
-    } else {
-      alert("Contact Ankan Service Center");
-    }
+  const onLogoutPressed = (): void => {
+    AsyncStorage.setItem("screenState", "one");
+    navigation && navigation.navigate("OtpScreen");
   };
 
   return (
@@ -146,9 +191,9 @@ export default ({ navigation }): React.ReactElement => {
               appearance="ghost"
               status="control"
               size="giant"
-              onPress={ShowAlertWithDelay}
+              onPress={onLogoutPressed}
             >
-              GET STARTED
+              Logout
             </Button>
           </LinearGradient>
         </View>

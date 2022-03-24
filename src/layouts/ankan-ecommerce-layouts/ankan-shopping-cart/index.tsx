@@ -61,9 +61,9 @@ export default ({ navigation }): React.ReactElement => {
         console.log("USER ID is Not found");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        console.log("USER ID is" + JSON.parse(res));
-        setUsrID(JSON.parse(res));
-        getCartDetails(JSON.parse(res));
+        console.log("USER ID is" + res);
+        setUsrID(res);
+        getCartDetails(res);
       }
     });
 

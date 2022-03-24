@@ -22,7 +22,6 @@ export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
   var [place, setPlace] = React.useState<string>();
   const [phno, setPhno] = React.useState<string>();
-  var [location, setLocation] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isLoading2, setIsLoading2] = React.useState<boolean>(true);
   const [locationList, setLocationList] = useState([]);
@@ -30,6 +29,11 @@ export default ({ navigation }): React.ReactElement => {
   const [locationId, setLocationId] = useState();
 
   useEffect(() => {
+    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
+      .then((response) => response.json())
+      .then((json) => setLocationList(json))
+      .catch((error) => console.error(error));
+
     AsyncStorage.getItem("screenState", (err, res) => {
       if (!res) {
         console.warn("screenState is empty");
@@ -38,22 +42,21 @@ export default ({ navigation }): React.ReactElement => {
         console.info("screenState  fetched " + res);
         // setScrState(JSON.parse(res));
         if (res === "one") {
-          navigation && navigation.navigate("AdminApproval");
+          navigation && navigation.navigate("OtpScreen");
         } else if (res === "two") {
+          navigation && navigation.navigate("AdminApproval");
+        } else if (res === "three") {
           navigation && navigation.navigate("Home");
+        } else if (res === "four") {
+          navigation && navigation.navigate("LoginScreen");
         } else {
-          navigation && navigation.navigate("RegistarationScreen");
+          navigation && navigation.navigate("Registration");
         }
         setIsLoading2(false);
       }
     });
-
-    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
-      .then((response) => response.json())
-      .then((json) => setLocationList(json))
-      .catch((error) => console.error(error));
-    //.finally(() => setLoading(false));
   }, []);
+
   const register = (): void => {
     if (
       firstName == null ||
@@ -86,14 +89,13 @@ export default ({ navigation }): React.ReactElement => {
             alert(json.title);
             setIsLoading(false);
           } else {
-            AsyncStorage.setItem(
-              "activationId",
-              JSON.stringify(json.activationId)
-            );
-            AsyncStorage.setItem("userId", JSON.stringify(json.userId));
+            AsyncStorage.setItem("activationId", json.activationId);
+            AsyncStorage.setItem("userId", json.userId);
             AsyncStorage.setItem("locationId", locationId);
+            AsyncStorage.setItem("phoneNumber", phno);
+            AsyncStorage.setItem("screenState", "one");
             console.log(
-              "Registering..." +
+              "Registration completd..." +
                 JSON.stringify(json) +
                 "with location id" +
                 locationId
@@ -110,6 +112,7 @@ export default ({ navigation }): React.ReactElement => {
         });
     }
   };
+
   const login = (): void => {
     navigation && navigation.navigate("LoginScreen");
   };
@@ -140,7 +143,6 @@ export default ({ navigation }): React.ReactElement => {
           />
           <View style={[styles.container, styles.formContainer]}>
             <Input
-              placeholder="Smith"
               label="FIRST NAME"
               autoCapitalize="words"
               value={firstName}
@@ -148,7 +150,6 @@ export default ({ navigation }): React.ReactElement => {
             />
             <Input
               style={styles.formInput}
-              placeholder="Watsan"
               label="LAST NAME"
               autoCapitalize="words"
               value={lastName}
@@ -156,42 +157,17 @@ export default ({ navigation }): React.ReactElement => {
             />
             <Input
               style={styles.formInput}
-              placeholder="smith.watsan@gmail.com"
               keyboardType="email-address"
               label="EMAIL"
               value={email}
               onChangeText={setEmail}
             />
-            {/* <Input
-          style={styles.formInput}
-          placeholder="Ernakulam"
-          label="PLACE"
-          value={place}
-          onChangeText={setPlace}
-        /> */}
-            {/* <ModalDropdown
-          options={value.types.map((value2, index2) => {
-            return value2.typeName;
-          })}
-          dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
-          style={styles.dropdown_5}
-          isFullWidth
-          textStyle={styles.dropdown_2_text}
-          onSelect={(index3, value3) => {
-            temp[index] = value.typeCategory + ":" + (index3 + 1);
-          }}
-        /> */}
-
             <View>
               <Text style={styles.formInput2} appearance={"hint"}>
                 LOCATION
               </Text>
-              {/* <Text>{JSON.stringify(value.types)}</Text> */}
-              {/* {setTemp(value.types)} */}
-
               <ModalDropdown
                 options={locationList.map((value, index) => {
-                  // place = value.id;
                   return value.locationName;
                 })}
                 dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
@@ -207,7 +183,6 @@ export default ({ navigation }): React.ReactElement => {
 
             <Input
               style={styles.formInput}
-              placeholder="9998889990"
               label="PHONE NUMBER"
               keyboardType="numeric"
               value={phno}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
@@ -20,30 +20,33 @@ export default ({ navigation }): React.ReactElement => {
   let [isPhoneVarified, setIsPhoneVarified] = React.useState<boolean>(false);
   var [activationId, setActivationId] = React.useState<string>();
   var [userId, setUserId] = React.useState<string>();
+  var [phoneNumber, setPhoneNumber] = React.useState<string>();
   const [spinner, setSpinner] = React.useState<Boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   useEffect(() => {
     AsyncStorage.getItem("activationId", (err, res) => {
       if (!res) {
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.log("Activation ID is Not found");
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        setActivationId(JSON.parse(res));
+        setActivationId(res);
       }
     });
     AsyncStorage.getItem("userId", (err, res) => {
       if (!res) {
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.log("USER ID is Not found");
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        console.log("USER ID " + JSON.parse(res));
-        setUserId(JSON.parse(res));
+        setUserId(res);
       }
     });
-  }, [otpNumber]);
+    AsyncStorage.getItem("phoneNumber", (err, res) => {
+      if (!res) {
+        console.log("USER ID is Not found");
+      } else {
+        setPhoneNumber(res);
+      }
+    });
+  }, [activationId]);
 
   const styles = useStyleSheet(themedStyles);
 
@@ -51,10 +54,11 @@ export default ({ navigation }): React.ReactElement => {
     setIsLoading(true);
     setTimeout(function () {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
-      console.log("Otp ID > " + `"${otpNumber}"`);
-      console.log("Activation ID > " + { activationId });
-      console.log("User ID > " + { userId });
+      console.log("Otp ID > " + otpNumber);
+      console.log("Activation ID > " + activationId);
+      console.log("User ID > " + userId);
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
       fetch("https://api.dev.ankanchem.net/users/api/User/VerifyOTP", {
         method: "POST",
         headers: {
@@ -71,21 +75,21 @@ export default ({ navigation }): React.ReactElement => {
       })
         .then((response) => response.json())
         .then((json) => {
+          //  alert(JSON.stringify(json));
           if (json.isPhoneVarified) {
             console.log("in otp screen " + JSON.stringify(json));
+            AsyncStorage.setItem("id", json.id);
+            AsyncStorage.setItem("userName", json.userName);
+            AsyncStorage.setItem("activationId", json.activationId);
+            AsyncStorage.setItem("activationSecret", json.activationSecret);
+            if (json.isActive) {
+              AsyncStorage.setItem("screenState", "three");
+              navigation && navigation.navigate("Home");
+            } else {
+              AsyncStorage.setItem("screenState", "two");
+              navigation && navigation.push("AdminApproval");
+            }
 
-            AsyncStorage.setItem("id", JSON.stringify(json.id));
-            AsyncStorage.setItem("userName", JSON.stringify(json.userName));
-            AsyncStorage.setItem(
-              "activationId",
-              JSON.stringify(json.activationId)
-            );
-            AsyncStorage.setItem(
-              "activationSecret",
-              JSON.stringify(json.activationSecret)
-            );
-            AsyncStorage.setItem("screenState", "one");
-            navigation && navigation.navigate("AdminApproval");
             setIsLoading(false);
           } else {
             alert("Invalid OTP Entered!! Try Again");
@@ -97,6 +101,31 @@ export default ({ navigation }): React.ReactElement => {
           console.error(error);
         });
     }, 2000);
+  };
+
+  const onOTPentered2 = (): void => {
+    fetch(
+      "https://api.dev.ankanchem.net/users/api/User/GetOTP/" + phoneNumber,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + "1234",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        AsyncStorage.setItem("activationId", json.activationId);
+        setActivationId(json.activationId);
+        return json;
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setIsLoading(false));
+    setIsLoading(true);
   };
 
   const otpVerification = (): void => {};
@@ -144,6 +173,15 @@ export default ({ navigation }): React.ReactElement => {
               VERIFY OTP
             </Button>
           </LinearGradient>
+          <TouchableOpacity style={styles.button} onPress={onOTPentered2}>
+            <Text
+              appearance={"default"}
+              status="primary"
+              style={styles.formInput3}
+            >
+              Resend OTP
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
       <View style={styles.orContainer}>
@@ -264,5 +302,12 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  formInput3: {
+    fontSize: 12,
+  },
+  button: {
+    alignItems: "center",
+    padding: 1,
   },
 });

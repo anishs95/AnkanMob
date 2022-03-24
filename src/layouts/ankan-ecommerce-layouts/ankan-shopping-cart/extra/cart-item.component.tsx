@@ -39,9 +39,9 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
         console.log("USER ID is Not found");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        console.log("USER ID " + JSON.parse(res));
-        setUserId(JSON.parse(res));
-        addItemToBag(x, JSON.parse(res));
+        console.log("USER ID " + res);
+        setUserId(res);
+        addItemToBag(x, res);
       }
     });
   }

@@ -64,8 +64,8 @@ export const ProductListScreen = ({
           if (!res) {
             console.log("userId id is empty");
           } else {
-            setUserId(JSON.parse(res));
-            getOrderStatusByUserID(JSON.parse(res));
+            setUserId(res);
+            getOrderStatusByUserID(res);
             console.log("userId id fetched " + res);
           }
         });
