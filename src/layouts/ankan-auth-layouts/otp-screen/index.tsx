@@ -251,7 +251,7 @@ const themedStyles = StyleService.create({
     height: 50,
     // paddingLeft: 15,
     // paddingRight: 15,
-    borderRadius: 65,
+    borderRadius: 10,
   },
   horizontal: {
     flexDirection: "row",
@@ -261,7 +261,7 @@ const themedStyles = StyleService.create({
   getOtpButton: {
     flex: 1,
     width: "100%",
-    borderRadius: 30,
+    borderRadius: 10,
     // marginTop: 30,
     // marginHorizontal: 26,
     // backgroundColor: "#ffa",
@@ -304,7 +304,9 @@ const themedStyles = StyleService.create({
     color: "#FFF",
   },
   formInput3: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   button: {
     alignItems: "center",

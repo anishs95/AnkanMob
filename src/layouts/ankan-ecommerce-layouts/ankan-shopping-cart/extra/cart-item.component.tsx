@@ -135,10 +135,10 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
     <ListItem {...listItemProps} style={[styles.container, style]}>
       <Image style={styles.image} source={{ uri: product.imageUrl }} />
       <View style={styles.detailsContainer}>
-        <Text category="s1">{product.name}</Text>
-        <Text appearance="hint" category="p2">
-          {/* {product.description.substring(1, 140)} */}
+        <Text style={{ fontWeight: "bold" }} category="s1">
+          {product.name}
         </Text>
+        <Text category="s2">{product.colors}</Text>
         <Text category="s2">₹{product.formattedPrice}</Text>
         <View style={styles.amountContainer}>
           <Button
@@ -194,10 +194,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   amountContainer: {
-    position: "absolute",
+    marginTop: 10,
     flexDirection: "row",
-    left: 16,
-    bottom: 16,
   },
   amountButton: {
     borderRadius: 16,

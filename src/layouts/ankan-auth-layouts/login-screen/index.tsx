@@ -64,7 +64,7 @@ export default ({ navigation }): React.ReactElement => {
   };
   const register = (): void => {
     AsyncStorage.setItem("screenState", "nine");
-    navigation.navigate("Registration2");
+    navigation.navigate("Registration");
   };
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -155,7 +155,7 @@ const themedStyles = StyleService.create({
 
   getOtpButton: {
     width: "100%",
-    borderRadius: 30,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -176,8 +176,8 @@ const themedStyles = StyleService.create({
   },
   signUpButton: {
     marginVertical: 34,
-    marginHorizontal: 26,
-    borderRadius: 30,
+    marginHorizontal: 40,
+    borderRadius: 10,
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -205,7 +205,9 @@ const themedStyles = StyleService.create({
     fontSize: 12,
   },
   formInput3: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   button: {
     alignItems: "center",

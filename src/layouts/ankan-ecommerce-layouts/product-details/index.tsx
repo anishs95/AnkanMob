@@ -38,6 +38,7 @@ export default ({ navigation, props }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [userId, setUserId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isColorsAvail, setColorsAvail] = React.useState<boolean>(false);
   const [locationId, setLocationId] = React.useState<string>();
 
   const SECTIONS = [
@@ -76,7 +77,7 @@ export default ({ navigation, props }): React.ReactElement => {
         <Button
           style={styles.calBags}
           onPress={onCalculateButtonPress}
-          status="warning"
+          status="info"
           size={"tiny"}
         >
           Calculate
@@ -104,8 +105,12 @@ export default ({ navigation, props }): React.ReactElement => {
       const val = jsonValue != null ? JSON.parse(jsonValue) : null;
       setData(val);
       setQuantity("1");
+      if (val.colors != null) {
+        setColorsAvail(true);
+      }
       console.log(
-        "[PRODUCT DETAILS] Item from parent about product is " + val.id
+        "[PRODUCT DETAILS] Item from parent about product is " +
+          JSON.stringify(val)
       );
     } catch (e) {
       console.log("error in reading data ");
@@ -205,16 +210,22 @@ export default ({ navigation, props }): React.ReactElement => {
     )
       .then((response) => response.json())
       .then((json) => {
-        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
         setNoOfBags(json + " bags");
         setDisclaimer("** May vary with the p.selector");
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        setNoOfBags("Contact Ankan Admin");
+      });
   };
 
   const onAddButtonPress = (): void => {
+    //  alert(isColorsAvail == true);
     if (parseInt(quantity) > 0) {
-      addItemToBag();
+      if (isColorsAvail == true && selectedColorIndex == undefined) {
+        alert("Choose a colour");
+      } else {
+        addItemToBag();
+      }
     } else {
       alert("Invalid quantity Choosen");
     }
@@ -226,7 +237,18 @@ export default ({ navigation, props }): React.ReactElement => {
   ): React.ReactElement => (
     <Radio key={index} style={styles.colorRadio}>
       {(evaProps) => (
-        <Text {...evaProps} style={{ color: "#" + color.code, marginLeft: 10 }}>
+        <Text
+          {...evaProps}
+          style={{
+            //backgroundColor: color.code,
+            marginLeft: 10,
+            borderRadius: 120,
+            padding: 9,
+            borderWidth: 2,
+            borderColor: color.code,
+            textAlign: "center",
+          }}
+        >
           {color.name.toUpperCase()}
         </Text>
       )}
@@ -260,8 +282,14 @@ export default ({ navigation, props }): React.ReactElement => {
     <Layout style={styles.header}>
       <ImageBackground style={styles.image} source={{ uri: data.imageUri }} />
       <Layout style={styles.detailsContainer} level="1">
-        <Text category="h6">{data.name}</Text>
-
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={styles.name}
+          category="h6"
+        >
+          {data.name}
+        </Text>
         <Text style={styles.price} category="h4">
           ₹ {data.price}
         </Text>
@@ -331,7 +359,7 @@ export default ({ navigation, props }): React.ReactElement => {
           <Button
             style={styles.actionButton}
             size="large"
-            status="success"
+            status="warning"
             onPress={onCartButtonPress}
           >
             CART
@@ -339,7 +367,7 @@ export default ({ navigation, props }): React.ReactElement => {
           <Button
             style={styles.actionButton}
             size="large"
-            status="info"
+            status="success"
             onPress={onAddButtonPress}
           >
             ADD TO BAG
@@ -380,6 +408,22 @@ const themedStyles = StyleService.create({
     flex: 1,
     backgroundColor: "background-basic-color-2",
   },
+  image: {
+    height: 250,
+    width: "100%",
+  },
+  name: {
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  price: {
+    fontWeight: "bold",
+    fontSize: 16,
+    width: 200,
+  },
+  description: {
+    marginVertical: 16,
+  },
   commentList: {
     flex: 1,
     backgroundColor: "transparent",
@@ -390,10 +434,7 @@ const themedStyles = StyleService.create({
   consumptionContent: {
     margin: 16,
   },
-  image: {
-    height: 340,
-    width: "100%",
-  },
+
   detailsContainer: {
     paddingVertical: 24,
     paddingHorizontal: 16,
@@ -412,11 +453,7 @@ const themedStyles = StyleService.create({
   subtitle: {
     marginTop: 4,
   },
-  price: {
-    position: "absolute",
-    top: 24,
-    right: 16,
-  },
+
   result: {
     top: 24,
     margin: 6,
@@ -428,9 +465,7 @@ const themedStyles = StyleService.create({
     bottom: 24,
     fontSize: 12,
   },
-  description: {
-    marginVertical: 16,
-  },
+
   size: {
     marginBottom: 16,
   },
@@ -452,6 +487,7 @@ const themedStyles = StyleService.create({
   },
   sectionLabel: {
     marginVertical: 8,
+    fontWeight: "bold",
   },
   sectionLabelRev: {
     flexDirection: "row",
@@ -475,6 +511,7 @@ const themedStyles = StyleService.create({
     borderRadius: 36,
   },
   calBags: {
+    height: 50,
     marginHorizontal: 16,
     marginTop: 24,
   },

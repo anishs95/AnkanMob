@@ -252,7 +252,7 @@ const themedStyles = StyleService.create({
     justifyContent: "center",
     alignItems: "center",
     height: 50,
-    borderRadius: 65,
+    borderRadius: 10,
   },
 
   getOtpButton: {

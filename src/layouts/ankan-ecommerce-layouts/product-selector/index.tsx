@@ -14,6 +14,7 @@ import ModalDropdown from "react-native-modal-dropdown";
 
 export default ({ navigation }): React.ReactElement => {
   const [isLoading, setLoading] = useState(true);
+  const [isEnabled, setEnabled] = useState(true);
   const [data, setData] = useState([]);
   const [temp, setTemp] = useState({});
   const onBuyButtonPress = (): void => {
@@ -103,7 +104,7 @@ export default ({ navigation }): React.ReactElement => {
                         textStyle={styles.dropdown_2_text}
                         onSelect={(index3, value3) => {
                           //   alert(JSON.stringify(value.types[index3].priority));
-
+                          setEnabled(false);
                           temp[value.typeCategory + "Id"] =
                             value.types[index3].priority;
                         }}
@@ -123,7 +124,9 @@ export default ({ navigation }): React.ReactElement => {
                 );
               })}
 
-              <Button onPress={onBuyButtonPress}>FIND</Button>
+              <Button disabled={isEnabled} onPress={onBuyButtonPress}>
+                FIND
+              </Button>
             </View>
           )}
         </Layout>
@@ -158,7 +161,8 @@ const styles = StyleSheet.create({
     marginTop: -14,
     marginLeft: -14,
     fontSize: 14,
-    fontFamily: "bold",
+    fontWeight: "bold",
+    textTransform: "capitalize",
   },
   dropdown_5: {
     marginTop: 8,

@@ -102,37 +102,38 @@ export const ProductListScreen = ({
   );
 
   const onItemPress = (index: number): void => {
-    navigation && navigation.navigate("ProductDetails3");
+    // navigation && navigation.navigate("ProductDetails3");
   };
-
-  const onItemCartPress = (index: number): void => {
-    navigation && navigation.navigate("ShoppingCart");
-  };
-
-  const renderItemFooter = (
-    info: ListRenderItemInfo<Product>
-  ): React.ReactElement => (
-    <View style={styles.itemFooter}>
-      {/* {alert(JSON.stringify(checkSwitch(info.item.status)))} */}
-      <Text status="info" category="label">
-        {checkSwitch(info.item.status)}
-      </Text>
-      {/* <Button
-        style={styles.iconButton}
-        size="small"
-        accessoryLeft={CartIcon}
-        onPress={() => onItemCartPress(info.index)}
-      /> */}
-    </View>
-  );
 
   const renderItemHeader = (
     info: ListRenderItemInfo<Product>
   ): React.ReactElement => (
-    <ImageBackground
-      style={styles.itemHeader}
-      source={{ uri: info.item.imageUrl }}
-    />
+    <View style={styles.header}>
+      <ImageBackground
+        style={styles.itemHeader}
+        source={{ uri: info.item.imageUrl }}
+      />
+      <View style={styles.verticleLine}></View>
+      <View>
+        <Text
+          style={styles.headerText}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          category="s1"
+        >
+          {info.item.productName}
+        </Text>
+        <Text style={styles.contentText} category="c1">
+          Total : ₹ {info.item.itemTotal}
+        </Text>
+        <Text style={styles.contentText} category="c1">
+          Colour : {info.item.color ? info.item.color.name : "nil"}
+        </Text>
+        <Text style={styles.contentText} category="c1">
+          Quantity : {info.item.quantity}
+        </Text>
+      </View>
+    </View>
   );
 
   const renderProductItem = (
@@ -141,25 +142,12 @@ export const ProductListScreen = ({
     <Card
       style={styles.productItem}
       header={() => renderItemHeader(info)}
-      footer={() => renderItemFooter(info)}
+      //  footer={() => renderItemFooter(info)}
       onPress={() => onItemPress(info.index)}
     >
-      <Text category="s1">{info.item.productName}</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "stretch",
-          justifyContent: "space-between",
-          //  justifyContent: "center",
-        }}
-      >
-        <Text appearance="hint" category="c1">
-          {info.item.quantity}
-        </Text>
-        <Text appearance="hint" category="c1">
-          ₹ {info.item.itemTotal}
-        </Text>
-      </View>
+      <Text status="info" category="label">
+        {checkSwitch(info.item.status)}
+      </Text>
     </Card>
   );
 
@@ -223,7 +211,8 @@ const themedStyles = StyleService.create({
     backgroundColor: "background-basic-color-1",
   },
   itemHeader: {
-    height: 150,
+    height: 120,
+    width: 120,
   },
   itemFooter: {
     flexDirection: "row",
@@ -237,5 +226,23 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  header: {
+    flexDirection: "row",
+  },
+  verticleLine: {
+    height: "100%",
+    width: 0.2,
+    backgroundColor: "#909090",
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 10,
+  },
+  contentText: {
+    fontSize: 10,
+    fontWeight: "normal",
+    paddingLeft: 10,
   },
 });

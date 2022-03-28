@@ -31,7 +31,8 @@ export default ({ navigation }): React.ReactElement => {
   const [cartData, setCartData] = useState([]);
   const [productss, setProducts] = useState<Product[]>([]);
   const [usrID, setUsrID] = useState<string>();
-
+  const [isCartEmpty, setCartEmpty] = React.useState<boolean>(true);
+  const [cartSize, setCartSize] = React.useState<number>();
   const componentMounted = useRef(true);
 
   const getData = async () => {
@@ -79,9 +80,15 @@ export default ({ navigation }): React.ReactElement => {
 
           if (json.items == null) {
             // alert("Sas");
+            setCartSize(0);
+            setCartEmpty(true);
             setItems([]);
           } else {
-            setItems(json.items);
+            setCartSize(json.items.length);
+            if (json.items.length > 0) {
+              setCartEmpty(false);
+              setItems(json.items);
+            }
           }
 
           setData(json);
@@ -98,10 +105,13 @@ export default ({ navigation }): React.ReactElement => {
       console.log("1111111111111111123");
       // console.log(data);
       console.log(data);
-      console.log("ITEMS" + items);
+      console.log("ITEMS" + JSON.stringify(items));
       var ret = items.map(myFunction);
       function myFunction(value, index, array) {
-        console.log(value.productId);
+        let col = value.color;
+        if (value.color != undefined) {
+          col = value.color.name;
+        }
         var prod: Product = new Product(
           value.productId,
           value.categoryId,
@@ -110,7 +120,7 @@ export default ({ navigation }): React.ReactElement => {
           value.unitPrice,
           value.quantity,
           value.unit,
-          value.colors,
+          col,
           value.imageUrl
         );
         return prod;
@@ -151,6 +161,11 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const onItemRemove = (product: Product, index: number): void => {
+    setCartSize(cartSize - 1);
+    // alert(cartSize);
+    if (cartSize <= 1) {
+      setCartEmpty(true);
+    }
     productss.splice(index, 1);
     setProducts([...productss]);
     console.log("USR ID " + usrID);
@@ -232,7 +247,8 @@ export default ({ navigation }): React.ReactElement => {
               />
               <Button
                 style={styles.checkoutButton}
-                size="giant"
+                size="medium"
+                disabled={isCartEmpty}
                 onPress={onCheckoutButtonPress}
               >
                 CHECKOUT

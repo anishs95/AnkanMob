@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Image, ListRenderItemInfo, View } from "react-native";
+import { Image, ListRenderItemInfo, View, CheckBox } from "react-native";
 import {
   Button,
   Card,
@@ -34,8 +34,6 @@ export default ({ navigation }): React.ReactElement => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const [addressDetails, setAddressDetails] = React.useState([]);
-
-  const options: string[] = ["Option 1", "Option 2", "Option 3"];
 
   const getCartDetails = async (userIds, lcnIds) => {
     console.log("usersid" + userIds);
@@ -177,7 +175,8 @@ export default ({ navigation }): React.ReactElement => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
+        console.log("REPLAY FROM PURCHASE");
+        console.log(JSON.stringify(json));
         getUserIdAndLocationId();
         clearCart();
         return json;
@@ -245,7 +244,6 @@ export default ({ navigation }): React.ReactElement => {
       {isAddress ? (
         <View style={styles.cardItem}>
           <View style={styles.cardLogoContainer}>
-            <Image style={styles.cardLogo} source={info.item.logo} />
             <Button
               style={styles.cardOptionsButton}
               appearance="ghost"
@@ -253,10 +251,29 @@ export default ({ navigation }): React.ReactElement => {
               accessoryLeft={MoreVerticalIcon}
               onPress={onPlaceholderCardPress}
             />
+            <Text
+              style={styles.cardOptionsButton2}
+              category="label"
+              status="control"
+            >
+              COD
+            </Text>
           </View>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              textDecorationLine: "underline",
+            }}
+            category="h6"
+            status="control"
+          >
+            Delivery Address
+          </Text>
           <Text style={styles.cardNumber} category="h6" status="control">
             {addressLine1}
           </Text>
+
           <View style={styles.cardNameContainer}>
             <Text
               style={styles.cardDetailsLabel}
@@ -296,12 +313,12 @@ export default ({ navigation }): React.ReactElement => {
   return (
     <React.Fragment>
       <List
-        style={styles.list}
         contentContainerStyle={styles.listContent}
         data={paymentCards}
         renderItem={renderCardItem2}
         // ListFooterComponent={renderFooter}
       />
+
       <Spinner
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
@@ -309,15 +326,9 @@ export default ({ navigation }): React.ReactElement => {
         textContent={"Placing Order..."}
         textStyle={styles.spinnerTextStyle}
       />
-      <RadioGroup selectedIndex={selectedIndex}>
-        {options.map((el, index) => (
-          <Radio key={index}>
-            {(evaProps) => <Text {...evaProps}>{el}</Text>}
-          </Radio>
-        ))}
-      </RadioGroup>
+
       <Layout style={styles.buyButtonContainer}>
-        <Button size="giant" onPress={onBuyButtonPress}>
+        <Button size="medium" onPress={onBuyButtonPress}>
           BUY
         </Button>
       </Layout>
@@ -327,20 +338,18 @@ export default ({ navigation }): React.ReactElement => {
 
 const themedStyles = StyleService.create({
   container: {
-    flex: 1,
+    flex: 0.5,
   },
-  list: {
-    flex: 1,
-  },
+
   listContent: {
     padding: 16,
   },
   cardItem: {
     margin: 8,
-    height: 242,
+    height: 220,
     padding: 24,
     borderRadius: 4,
-    backgroundColor: "color-primary-default",
+    backgroundColor: "#008B8B",
   },
   cardLogoContainer: {
     flexDirection: "row",
@@ -358,8 +367,18 @@ const themedStyles = StyleService.create({
     paddingHorizontal: 0,
     paddingVertical: 0,
   },
+  cardOptionsButton2: {
+    position: "absolute",
+    right: 1,
+    top: 55,
+    color: "black",
+    fontWeight: "bold",
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+  },
   cardNumber: {
-    marginVertical: 24,
+    marginTop: 20,
   },
   cardDetailsLabel: {
     marginVertical: 4,
@@ -392,10 +411,20 @@ const themedStyles = StyleService.create({
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: 16,
+    paddingHorizontal: 26,
     paddingVertical: 24,
   },
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  checkbox: {
+    alignSelf: "center",
+  },
+  label: {
+    margin: 8,
   },
 });

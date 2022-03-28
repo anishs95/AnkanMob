@@ -117,13 +117,12 @@ export const CategoryListScreen = ({
     info: ListRenderItemInfo<Product>
   ): React.ReactElement => (
     <View style={styles.itemFooter}>
-      <Text category="label">{info.item.uniCodeText}</Text>
-      {/* <Button
-        style={styles.iconButton}
-        size="small"
-        accessoryLeft={CartIcon}
-        onPress={() => onItemCartPress(info.index)}
-      /> */}
+      <Text style={styles.body} category="c2">
+        {info.item.description}
+      </Text>
+      <Text style={styles.body2} category="label">
+        {info.item.uniCodeText}
+      </Text>
     </View>
   );
 
@@ -147,9 +146,6 @@ export const CategoryListScreen = ({
     >
       <Text style={styles.title} category="s1">
         {info.item.name}
-      </Text>
-      <Text appearance="hint" category="c1">
-        {info.item.description}
       </Text>
     </Card>
   );
@@ -180,7 +176,7 @@ const themedStyles = StyleService.create({
   },
   productList: {
     paddingHorizontal: 8,
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
   productItem: {
     flex: 1,
@@ -192,19 +188,30 @@ const themedStyles = StyleService.create({
     height: 140,
   },
   itemFooter: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    alignItems: "flex-start",
+    paddingVertical: 5,
+    paddingHorizontal: 12,
   },
   iconButton: {
     paddingHorizontal: 0,
   },
 
   title: {
-    height: 45,
-    textAlign: "left",
+    flex: 1,
+    width: "100%",
+    // borderWidth: 1,
+
+    marginLeft: -10,
+    fontWeight: "bold",
+  },
+  body: {
+    fontWeight: "bold",
+    fontSize: 10,
+  },
+  body2: {
+    fontSize: 10,
   },
   spinnerTextStyle: {
     color: "#FFF",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, ScrollView } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -141,7 +141,7 @@ export default ({ navigation }): React.ReactElement => {
             textContent={"Registering..."}
             textStyle={styles.spinnerTextStyle}
           />
-          <View style={[styles.container, styles.formContainer]}>
+          <ScrollView style={[styles.container2, styles.formContainer]}>
             <Input
               label="FIRST NAME"
               autoCapitalize="words"
@@ -188,33 +188,33 @@ export default ({ navigation }): React.ReactElement => {
               value={phno}
               onChangeText={setPhno}
             />
-          </View>
-          <LinearGradient
-            start={{ x: 0.0, y: 0.0 }}
-            end={{ x: 1.5, y: 0.9 }}
-            locations={[0, 0.5, 0.6]}
-            colors={["#0095D9", "#8A2BE2"]}
-            style={styles.signUpButton}
-          >
-            <Button
-              style={styles.getOtpButton}
-              appearance="ghost"
-              status="control"
-              size="giant"
-              onPress={register}
+            <LinearGradient
+              start={{ x: 0.0, y: 0.0 }}
+              end={{ x: 1.5, y: 0.9 }}
+              locations={[0, 0.5, 0.6]}
+              colors={["#0095D9", "#8A2BE2"]}
+              style={styles.signUpButton}
             >
-              Get OTP
-            </Button>
-          </LinearGradient>
-          <TouchableOpacity style={styles.button} onPress={login}>
-            <Text
-              appearance={"default"}
-              status="primary"
-              style={styles.formInput3}
-            >
-              Already a member? LOGIN IN HERE
-            </Text>
-          </TouchableOpacity>
+              <Button
+                style={styles.getOtpButton}
+                appearance="ghost"
+                status="control"
+                size="giant"
+                onPress={register}
+              >
+                Get OTP
+              </Button>
+            </LinearGradient>
+            <TouchableOpacity style={styles.button} onPress={login}>
+              <Text
+                appearance={"default"}
+                status="primary"
+                style={styles.formInput3}
+              >
+                Already a member? LOG IN
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
         </KeyboardAvoidingView>
       )}
     </View>
@@ -225,12 +225,17 @@ const themedStyles = StyleService.create({
   container: {
     backgroundColor: "background-basic-color-1",
   },
+  container2: {
+    radius: 60,
+    flex: 2,
+    paddingBottom: 40,
+  },
   headerContainer: {
     minHeight: 216,
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 44,
-    radius: 20,
+    radius: 60,
   },
   bookingCard: {
     margin: 4,
@@ -238,7 +243,7 @@ const themedStyles = StyleService.create({
 
   getOtpButton: {
     width: "100%",
-    borderRadius: 30,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -258,9 +263,9 @@ const themedStyles = StyleService.create({
     paddingLeft: 20,
   },
   signUpButton: {
-    marginVertical: 34,
+    marginVertical: 30,
     marginHorizontal: 26,
-    borderRadius: 30,
+    borderRadius: 10,
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -288,10 +293,12 @@ const themedStyles = StyleService.create({
     fontSize: 12,
   },
   formInput3: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   button: {
     alignItems: "center",
-    padding: 1,
+    padding: 0,
   },
 });

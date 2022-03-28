@@ -166,12 +166,20 @@ export const ProductListScreen = ({
     <Card
       style={styles.productItem}
       header={() => renderItemHeader(info)}
-      footer={() => renderItemFooter(info)}
+      // footer={() => renderItemFooter(info)}
       onPress={() => onItemPress(info.item)}
     >
-      <Text style={styles.title} category="s1">
+      <View style={styles.itemFooter}>
+        <Text style={styles.body} numberOfLines={2} adjustsFontSizeToFit>
+          {info.item.name}
+        </Text>
+        <Text style={styles.body2} category="label">
+          ₹ {info.item.price}
+        </Text>
+      </View>
+      {/* <Text style={styles.title} category="s1">
         {info.item.name}
-      </Text>
+      </Text> */}
       {/* <Text appearance="hint" category="c1">
         ₹. {info.item.price}
       </Text> */}
@@ -204,7 +212,7 @@ const themedStyles = StyleService.create({
   },
   productList: {
     paddingHorizontal: 8,
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
   productItem: {
     flex: 1,
@@ -216,11 +224,12 @@ const themedStyles = StyleService.create({
     height: 140,
   },
   itemFooter: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    alignItems: "flex-start",
+    paddingVertical: 1,
+
+    paddingHorizontal: 1,
   },
   iconButton: {
     backgroundColor: "#0095D9",
@@ -228,10 +237,25 @@ const themedStyles = StyleService.create({
     paddingHorizontal: 0,
   },
   title: {
-    height: 40,
-    textAlign: "left",
+    flex: 1,
+    width: "100%",
+    borderWidth: 1,
+
+    marginLeft: -10,
+    fontWeight: "bold",
   },
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  body: {
+    fontWeight: "bold",
+    width: "130%",
+    // borderWidth: 1,
+    marginLeft: -8,
+    marginTop: -10,
+  },
+  body2: {
+    fontSize: 12,
+    marginLeft: -8,
   },
 });
