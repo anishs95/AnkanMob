@@ -17,147 +17,217 @@ import {
   Text,
   useStyleSheet,
 } from "@ui-kitten/components";
+import {
+  ArrowIosBackIcon,
+  BookmarkIcon,
+  BookmarkOutlineIcon,
+} from "../../../components/icons";
+import ModalDropdown from "react-native-modal-dropdown";
 import { CartItem } from "./extra/cart-item.component";
 import { Product } from "./extra/data2";
+import Dialog from "react-native-dialog";
 
 const initialProducts: Product[] = [];
 
 export default ({ navigation }): React.ReactElement => {
-  const styles = useStyleSheet(themedStyle);
-  const [cartProducts, setCartProducts] = useState<Product[]>();
-  var [data, setData] = useState();
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [cartData, setCartData] = useState([]);
-  const [productss, setProducts] = useState<Product[]>([]);
-  const [usrID, setUsrID] = useState<string>();
+  const [cartList, setCartList] = useState([]);
+  const [cartId, setCartId] = useState();
+  var [place, setPlace] = React.useState<string>();
+  const [isLoading2, setIsLoading2] = React.useState<boolean>(true);
+  const [userId, setUserId] = React.useState<string>();
   const [isCartEmpty, setCartEmpty] = React.useState<boolean>(true);
   const [cartSize, setCartSize] = React.useState<number>();
-  const componentMounted = useRef(true);
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [productss, setProducts] = useState<Product[]>([]);
+  const [isDefaultCart, setDefaultCart] = React.useState<boolean>(false);
+  var [data, setData] = useState();
+  const [cartName, setCartName] = React.useState<string>();
+  const [visible, setVisible] = useState(false);
+  const [visible2, setVisible2] = useState(false);
+  const [sharePhoneNumber, setSharePhoneNumber] = React.useState<string>();
+  const showDialog = () => {
+    setVisible(true);
+  };
+  const showDialog2 = () => {
+    setVisible2(true);
+  };
 
-  const getData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("@cartDetails");
-      const val = jsonValue != null ? JSON.parse(jsonValue) : null;
-      console.log("[CART PAGE]" + val);
-      //setData(val);
-      // console.log(
-      //   "Item from parent about product in cart is .........." +
-      //     JSON.stringify(val[3])
-      // );
-    } catch (e) {
-      console.log("error in reading data in cart ");
-      setIsLoading(true);
-    }
+  const handleCancel = () => {
+    setVisible(false);
+    setVisible2(false);
+  };
+
+  const handleSave = () => {
+    console.log(cartName);
+    fetch(
+      "https://api.dev.ankanchem.net/cart/api/Cart/SaveCart/" +
+        userId +
+        "/" +
+        cartName,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setData(json);
+        console.log("[CART NAME SAVED]" + json);
+        navigation && navigation.navigate("ProductDetails");
+        return json;
+      })
+      .catch((error) => {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.error("Save  Cart Name error " + error);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      });
+
+    setVisible(false);
+  };
+
+  const handleShare = () => {
+    console.log("Share cart :" + sharePhoneNumber);
+    console.log("Share cart :" + cartId);
+    fetch(
+      "https://api.dev.ankanchem.net/cart/api/Cart/SendYourCart/" +
+        userId +
+        "/" +
+        cartId +
+        "/" +
+        sharePhoneNumber,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setData(json);
+        console.log("[CART NAME SAVED]" + json);
+        navigation && navigation.navigate("ProductDetails");
+        return json;
+      })
+      .catch((error) => {
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.error("Save  Cart Name error " + error);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      });
+
+    setVisible2(false);
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      console.log("Refreshed!");
-    });
-    unsubscribe;
     AsyncStorage.getItem("userId", (err, res) => {
       if (!res) {
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.log("USER ID is Not found");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       } else {
-        console.log("USER ID is" + res);
-        setUsrID(res);
-        getCartDetails(res);
+        console.log("USER ID " + res);
+        getCartItems(res, null);
+        setUserId(res);
+        fetch(
+          "https://api.dev.ankanchem.net/cart/api/Cart/GetUserCartList/" + res
+        )
+          .then((response) => response.json())
+          .then((json) => setCartList(json))
+          .catch((error) => console.error(error));
       }
     });
+  }, []);
 
-    const getCartDetails = async (userId) => {
-      fetch(
+  const getCartUrl = (usrIds, cartId) => {
+    var URL;
+    if (cartId == null) {
+      URL =
         "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
-          userId +
-          "/<location>"
-      )
-        .then((response) => response.json())
-        .then((json) => {
-          console.log("Lengthss123");
-
-          if (json.items == null) {
-            // alert("Sas");
-            setCartSize(0);
-            setCartEmpty(true);
-            setItems([]);
-          } else {
-            setCartSize(json.items.length);
-            if (json.items.length > 0) {
-              setCartEmpty(false);
-              setItems(json.items);
-            }
-          }
-
-          setData(json);
-        })
-        .catch((error) => console.error("error" + error))
-        .finally(() => setIsLoading(false));
-    };
-
-    if (componentMounted.current) {
-      // (5) is component still mounted?
+        usrIds +
+        "/" +
+        "<location>";
+      setDefaultCart(true);
+    } else {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        userId +
+        "/" +
+        cartId +
+        "/<location>";
     }
-    setTimeout(function () {
-      console.log("----------------8-----------------");
-      console.log("1111111111111111123");
-      // console.log(data);
-      console.log(data);
-      console.log("ITEMS" + JSON.stringify(items));
-      var ret = items.map(myFunction);
-      function myFunction(value, index, array) {
-        let col = value.color;
-        if (value.color != undefined) {
-          col = value.color.name;
+    return URL;
+  };
+
+  const getCartItems = async (usrIds, cartId) => {
+    //alert(URL);
+    const URLs = getCartUrl(usrIds, cartId);
+
+    fetch(URLs)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log("Lengthss123");
+        if (json.items == null) {
+          //  alert("Empty Cart");
+          setCartSize(0);
+          setCartEmpty(true);
+          setItems([]);
+          setCartItemsFunction([]);
+        } else {
+          // alert(json.items.length);
+          setCartSize(json.items.length);
+          if (json.items.length > 0) {
+            setCartEmpty(false);
+            setItems(json.items);
+            setCartItemsFunction(json.items);
+            console.log(json.items);
+          }
         }
-        var prod: Product = new Product(
-          value.productId,
-          value.categoryId,
-          value.productName,
-          value.description,
-          value.unitPrice,
-          value.quantity,
-          value.unit,
-          col,
-          value.imageUrl
-        );
-        return prod;
+        setData(json);
+      })
+      .catch((error) => console.error("err 12312 :" + error))
+      .finally(() => setIsLoading(false));
+  };
+
+  const setCartItemsFunction = async (items) => {
+    console.log("ITEMS" + JSON.stringify(items));
+    var ret = items.map(myFunction);
+    function myFunction(value, index, array) {
+      //   alert(JSON.stringify(value.color));
+      let col = value.color;
+      if (value.color != undefined) {
+        col = value.color.name;
       }
-      setProducts(ret);
-      console.log("return " + productss);
-    }, 1000); //run this after 3 seconds
+      var prod: Product = new Product(
+        value.productId,
+        value.categoryId,
+        value.productName,
+        value.description,
+        value.unitPrice,
+        value.quantity,
+        value.unit,
+        col,
+        value.imageUrl,
+        value.color
+      );
+      return prod;
+    }
+    setProducts(ret);
+    console.log("return " + productss);
+  };
 
-    const backAction = () => {
-      navigation.goBack();
-      // Alert.alert(JSON.stringify(data));
-      // Alert.alert("Hold on!", "Are you sure you want to go back?", [
-      //   {
-      //     text: "Cancel",
-      //     onPress: () => null,
-      //     style: "cancel",
-      //   },
-      //   { text: "YES", onPress: () => BackHandler.exitApp() },
-      // ]);
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => {
-      // This code runs when component is unmounted
-      componentMounted.current = false; // (4) set it to false when we leave the page
-    };
-  }, data);
-
-  const totalCost = (): number => {
-    console.log("Item from parent about product in cart is .... " + productss);
-    return productss.reduce(
-      (acc: number, product: Product): number => acc + product.totalPrice,
-      0
-    );
+  const onItemChange = (product: Product, index: number): void => {
+    // alert(JSON.stringify(product));
+    productss[index] = product;
+    setProducts([...productss]);
   };
 
   const onItemRemove = (product: Product, index: number): void => {
@@ -168,27 +238,38 @@ export default ({ navigation }): React.ReactElement => {
     }
     productss.splice(index, 1);
     setProducts([...productss]);
-    console.log("USR ID " + usrID);
-    fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
-        usrID +
+    console.log("USR ID 3 " + userId);
+    console.log("Cart ID 3 " + cartId);
+    var URL;
+    if (cartId == null) {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
+        userId +
         "/" +
-        "location",
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
-        },
-        body: JSON.stringify({
-          ProductId: product.id,
-          ProductName: product.name,
-          Quantity: product.quantity,
-        }),
-      }
-    )
+        "<location>";
+    } else {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
+        userId +
+        "/" +
+        cartId +
+        "/<location>";
+    }
+    //  alert(URL);
+    fetch(URL, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+      },
+      body: JSON.stringify({
+        ProductId: product.id,
+        ProductName: product.name,
+        Quantity: product.quantity,
+      }),
+    })
       .then((response) => response.json())
       .then((json) => {
         setData(json);
@@ -204,10 +285,25 @@ export default ({ navigation }): React.ReactElement => {
     console.log(product);
   };
 
-  const onItemChange = (product: Product, index: number): void => {
-    // alert(JSON.stringify(product));
-    productss[index] = product;
-    setProducts([...productss]);
+  const renderProductItem = (
+    info: ListRenderItemInfo<Product>
+  ): React.ReactElement => (
+    <CartItem
+      style={styles.item}
+      index={info.index}
+      product={info.item}
+      cartId={cartId}
+      onProductChange={onItemChange}
+      onRemove={onItemRemove}
+    />
+  );
+
+  const totalCost = (): number => {
+    console.log("Item from parent about product in cart is .... " + productss);
+    return productss.reduce(
+      (acc: number, product: Product): number => acc + product.totalPrice,
+      0
+    );
   };
 
   const renderFooter = (): React.ReactElement => (
@@ -218,24 +314,36 @@ export default ({ navigation }): React.ReactElement => {
     </Layout>
   );
 
-  const renderProductItem = (
-    info: ListRenderItemInfo<Product>
-  ): React.ReactElement => (
-    <CartItem
-      style={styles.item}
-      index={info.index}
-      product={info.item}
-      onProductChange={onItemChange}
-      onRemove={onItemRemove}
-    />
-  );
   const onCheckoutButtonPress = (): void => {
     navigation && navigation.navigate("Payment");
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Layout style={styles.container} level="2">
+          <ModalDropdown
+            options={cartList.map((value, index) => {
+              return value.cartName;
+            })}
+            defaultValue="Default Cart ▼"
+            //  dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
+            style={styles.dropdown_5}
+            renderRightComponent={BookmarkIcon}
+            isFullWidth
+            textStyle={styles.dropdown_2_text}
+            onSelect={(index3, value3) => {
+              setCartId(cartList[index3].cartId);
+              setPlace(value3);
+              if (value3 === "Default") {
+                setDefaultCart(true);
+              } else {
+                setDefaultCart(false);
+              }
+              getCartItems(null, cartList[index3].cartId);
+            }}
+          />
+          {/* <Text>{place}</Text> */}
           {isLoading ? (
             <ActivityIndicator size="large" color="red" />
           ) : (
@@ -245,6 +353,25 @@ export default ({ navigation }): React.ReactElement => {
                 renderItem={renderProductItem}
                 ListFooterComponent={renderFooter}
               />
+              {isDefaultCart ? (
+                <Button
+                  style={styles.checkoutButton}
+                  size="medium"
+                  disabled={isCartEmpty}
+                  onPress={showDialog}
+                >
+                  SAVE CART
+                </Button>
+              ) : (
+                <Button
+                  style={styles.checkoutButton}
+                  size="medium"
+                  disabled={isCartEmpty}
+                  onPress={showDialog2}
+                >
+                  SHARE CART
+                </Button>
+              )}
               <Button
                 style={styles.checkoutButton}
                 size="medium"
@@ -253,6 +380,32 @@ export default ({ navigation }): React.ReactElement => {
               >
                 CHECKOUT
               </Button>
+
+              <Dialog.Container visible={visible} statusBarTranslucent>
+                <Dialog.Title>Provide Cart Name</Dialog.Title>
+                {/* <Dialog.Description>
+                  Do you want to delete this account? You cannot undo this
+                  action.
+                </Dialog.Description> */}
+                <Dialog.Input onChangeText={setCartName}></Dialog.Input>
+                <Dialog.Button label="Cancel" onPress={handleCancel} />
+                <Dialog.Button label="Save" onPress={handleSave} />
+              </Dialog.Container>
+
+              <Dialog.Container visible={visible2} statusBarTranslucent>
+                <Dialog.Title>Share Cart</Dialog.Title>
+                <Dialog.Description>
+                  Enter the Phone Number to which you need to share the cart.
+                </Dialog.Description>
+                <Dialog.Input
+                  onChangeText={setSharePhoneNumber}
+                  keyboardType="numeric"
+                  textAlign="center"
+                  maxLength={10}
+                ></Dialog.Input>
+                <Dialog.Button label="Cancel" onPress={handleCancel} />
+                <Dialog.Button label="Save" onPress={handleShare} />
+              </Dialog.Container>
             </View>
           )}
         </Layout>
@@ -261,7 +414,7 @@ export default ({ navigation }): React.ReactElement => {
   );
 };
 
-const themedStyle = StyleService.create({
+const styles = StyleService.create({
   container: {
     flex: 1,
   },
@@ -279,5 +432,28 @@ const themedStyle = StyleService.create({
   checkoutButton: {
     marginHorizontal: 16,
     marginVertical: 24,
+  },
+  dropdown_3_dropdownTextStyle: {
+    marginHorizontal: 16,
+    fontSize: 12,
+  },
+  dropdown_2_text: {
+    fontSize: 18,
+    color: "#120",
+    textAlign: "center",
+    alignSelf: "flex-end",
+    textAlignVertical: "center",
+  },
+  dropdown_5: {
+    alignSelf: "flex-end",
+    margin: 8,
+    borderColor: "black",
+    height: 40,
+    width: "50%",
+    backgroundColor: "#A9A9A9	",
+    borderWidth: 0.5,
+    borderRadius: 5,
+    padding: 8,
+    paddingLeft: 20,
   },
 });

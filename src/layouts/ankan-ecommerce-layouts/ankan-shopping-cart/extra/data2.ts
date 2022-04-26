@@ -10,7 +10,8 @@ export class Product {
     readonly quantity: number,
     readonly unit: number,
     readonly colors: [],
-    readonly imageUrl: string
+    readonly imageUrl: string,
+    readonly colorsObject: {}
   ) {}
 
   get formattedPrice(): number {

@@ -69,7 +69,7 @@ export const ProductListScreen = ({
       fetch(
         "https://api.dev.ankanchem.net/products/api/product/FindProductsByProductSelector/" +
           lcnId +
-          "/60c8aaab54657b3c4296e938",
+          "/Tile",
         {
           method: "POST",
           headers: {

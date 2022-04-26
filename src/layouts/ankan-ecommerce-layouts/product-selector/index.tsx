@@ -23,7 +23,7 @@ export default ({ navigation }): React.ReactElement => {
   };
   useEffect(() => {
     fetch(
-      "https://api.dev.ankanchem.net/products/api/Product/GetProductTypeMasters/60c8aaab54657b3c4296e938",
+      "https://api.dev.ankanchem.net/products/api/Product/GetProductTypeMasters/Tile",
       {
         method: "GET",
         headers: {
@@ -98,7 +98,7 @@ export default ({ navigation }): React.ReactElement => {
                         options={value.types.map((value2, index2) => {
                           return value2.typeName;
                         })}
-                        dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
+                        //  dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
                         style={styles.dropdown_5}
                         isFullWidth
                         textStyle={styles.dropdown_2_text}

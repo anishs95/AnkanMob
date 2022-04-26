@@ -59,6 +59,7 @@
     "react-native-collapsible": "^1.6.0",
     "react-native-counters": "^1.2.0",
     "react-native-device-info": "^5.5.1",
+    "react-native-dialog": "^9.2.1",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-linear-gradient": "^2.5.6",

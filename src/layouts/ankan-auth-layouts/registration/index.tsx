@@ -170,7 +170,7 @@ export default ({ navigation }): React.ReactElement => {
                 options={locationList.map((value, index) => {
                   return value.locationName;
                 })}
-                dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
+                // dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
                 style={styles.dropdown_5}
                 isFullWidth
                 textStyle={styles.dropdown_2_text}
@@ -185,6 +185,7 @@ export default ({ navigation }): React.ReactElement => {
               style={styles.formInput}
               label="PHONE NUMBER"
               keyboardType="numeric"
+              maxLength={10}
               value={phno}
               onChangeText={setPhno}
             />

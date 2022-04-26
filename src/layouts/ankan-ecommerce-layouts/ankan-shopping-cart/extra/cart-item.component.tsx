@@ -14,13 +14,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export type CartItemProps = ListItemProps & {
   index: number;
   product: Product;
+  cartId: string;
   onProductChange: (product: Product, index: number) => void;
   onRemove: (product: Product, index: number) => void;
 };
 
 export const CartItem = (props: CartItemProps): React.ReactElement => {
-  const { style, product, index, onProductChange, onRemove, ...listItemProps } =
-    props;
+  const {
+    style,
+    product,
+    index,
+    cartId,
+    onProductChange,
+    onRemove,
+    ...listItemProps
+  } = props;
   const [quantityx, setQuantityx] = React.useState<string>();
   const decrementButtonEnabled = (): boolean => {
     return product.quantity > 1;
@@ -47,26 +55,37 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
   }
 
   function addItemToBag(x, userIds) {
-    fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+    var URL;
+    if (cartId == null) {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userIds +
         "/" +
-        "location",
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
-        },
-        body: JSON.stringify({
-          ProductId: product.id,
-          ProductName: product.name,
-          Quantity: x,
-        }),
-      }
-    )
+        "<location>";
+    } else {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+        userIds +
+        "/" +
+        cartId +
+        "/<location>";
+    }
+
+    fetch(URL, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+      },
+      body: JSON.stringify({
+        ProductId: product.id,
+        ProductName: product.name,
+        Quantity: x,
+        Color: product.colorsObject,
+      }),
+    })
       .then((response) => response.json())
       .then((json) => {
         console.log(
@@ -82,37 +101,38 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       });
   }
-  const onMinusButtonPress = (): void => {
-    const updatedProduct: Product = new Product(
-      product.id,
-      product.categoryId,
-      product.name,
-      product.description,
-      product.price,
-      product.quantity - 1,
-      product.unit,
-      product.colors,
-      product.imageUrl
-    );
-    updateItem(-1);
-    onProductChange(updatedProduct, index);
-  };
+  // const onMinusButtonPress = (): void => {
+  //   console.log("sasa :" + JSON.stringify(product));
+  //   const updatedProduct: Product = new Product(
+  //     product.id,
+  //     product.categoryId,
+  //     product.name,
+  //     product.description,
+  //     product.price,
+  //     product.quantity - 1,
+  //     product.unit,
+  //     product.colors,
+  //     product.imageUrl
+  //   );
+  //   updateItem(-1);
+  //   onProductChange(updatedProduct, index);
+  // };
 
-  const onPlusButtonPress = (): void => {
-    const updatedProduct: Product = new Product(
-      product.id,
-      product.categoryId,
-      product.name,
-      product.description,
-      product.price,
-      product.quantity + 1,
-      product.unit,
-      product.colors,
-      product.imageUrl
-    );
-    updateItem(1);
-    onProductChange(updatedProduct, index);
-  };
+  // const onPlusButtonPress = (): void => {
+  //   const updatedProduct: Product = new Product(
+  //     product.id,
+  //     product.categoryId,
+  //     product.name,
+  //     product.description,
+  //     product.price,
+  //     product.quantity + 1,
+  //     product.unit,
+  //     product.colors,
+  //     product.imageUrl
+  //   );
+  //   updateItem(1);
+  //   onProductChange(updatedProduct, index);
+  // };
   const setQuantity = (): void => {
     let qua = parseInt(quantityx) - product.quantity;
     if (parseInt(quantityx) > 0) {
@@ -125,7 +145,8 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
         parseInt(quantityx),
         product.unit,
         product.colors,
-        product.imageUrl
+        product.imageUrl,
+        product.colorsObject
       );
       updateItem(qua);
       onProductChange(updatedProduct, index);
@@ -141,13 +162,13 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
         <Text category="s2">{product.colors}</Text>
         <Text category="s2">₹{product.formattedPrice}</Text>
         <View style={styles.amountContainer}>
-          <Button
+          {/* <Button
             style={[styles.iconButton, styles.amountButton]}
             size="tiny"
             accessoryLeft={MinusIcon}
             onPress={onMinusButtonPress}
             disabled={!decrementButtonEnabled()}
-          />
+          /> */}
           {/* <Text style={styles.amount} category="s2">
             {`${product.quantity}`}
           </Text> */}
@@ -159,12 +180,12 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
           >
             {product.quantity}
           </Input>
-          <Button
+          {/* <Button
             style={[styles.iconButton, styles.amountButton]}
             size="tiny"
             accessoryLeft={PlusIcon}
             onPress={onPlusButtonPress}
-          />
+          /> */}
         </View>
       </View>
       <Button
