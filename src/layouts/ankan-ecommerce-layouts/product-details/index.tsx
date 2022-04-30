@@ -356,14 +356,14 @@ export default ({ navigation, props }): React.ReactElement => {
           />
         </View>
         <View style={styles.actionContainer}>
-          <Button
+          {/* <Button
             style={styles.actionButton}
             size="large"
             status="warning"
             onPress={onCartButtonPress}
           >
             CART
-          </Button>
+          </Button> */}
           <Button
             style={styles.actionButton}
             size="large"

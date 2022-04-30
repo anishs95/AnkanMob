@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 const paymentCards: PaymentCard[] = [PaymentCard.emilyClarckVisa()];
 
-export default ({ navigation }): React.ReactElement => {
+export default ({ navigation, route }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [addressLine1, setAddressLine1] = React.useState<string>();
   const [addressLine2, setAddressLine2] = React.useState<string>();
@@ -32,17 +32,30 @@ export default ({ navigation }): React.ReactElement => {
   const [userId, setUserId] = React.useState<string>();
   const [locationId, setLocationId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [cartNameSelected, setCartNameSelected] = React.useState<string>();
 
   const [addressDetails, setAddressDetails] = React.useState([]);
 
-  const getCartDetails = async (userIds, lcnIds) => {
-    console.log("usersid" + userIds);
-    fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+  const getCartDetails = async (userIds, lcnIds, cartId) => {
+    var URL;
+    // alert("GET CART :" + cartId);
+    if (cartId == null || cartId == "") {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
         userIds +
         "/" +
-        lcnIds
-    )
+        "<location>";
+    } else {
+      URL =
+        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        userIds +
+        "/" +
+        cartId +
+        "/<location>";
+    }
+    console.log("usersid" + userIds);
+    console.log("URL here" + URL);
+    fetch(URL)
       .then((response) => response.json())
       .then((json) => {
         setItems(json.items);
@@ -83,17 +96,30 @@ export default ({ navigation }): React.ReactElement => {
 
   const clearCart = async () => {
     console.log("Cart clearing Success " + userId);
+    console.log(
+      "URL cart clearing :" +
+        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
+        userId +
+        "/" +
+        cartNameSelected
+    );
     try {
-      fetch("https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" + userId, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
-        },
-        body: JSON.stringify({}),
-      })
+      fetch(
+        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
+          userId +
+          "/" +
+          cartNameSelected,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlZHb3BpbmF0aCIsIm5iZiI6MTYyMzEzNjY1MSwiZXhwIjoxNjIzMjIzMDUxLCJpYXQiOjE2MjMxMzY2NTF9.fXmdUO49ayKRrc3zSBJbwaMetTOlMcRzoY4AC7U1Zxs",
+          },
+          body: JSON.stringify({}),
+        }
+      )
         .then((response) => response.json())
         .then((json) => {
           console.log("Cart clearing Success ");
@@ -112,13 +138,13 @@ export default ({ navigation }): React.ReactElement => {
     }
   };
 
-  const getUserIdAndLocationId = async () => {
+  const getUserIdAndLocationId = async (cartId) => {
     try {
       const usrId = await AsyncStorage.getItem("userId");
       const lcnId = await AsyncStorage.getItem("locationId");
       setUserId(usrId);
       setLocationId(lcnId);
-      getCartDetails(usrId, lcnId);
+      getCartDetails(usrId, lcnId, cartId);
       console.log(
         "User Id  and lcn id in Payment Screen " + usrId + " loc --> " + lcnId
       );
@@ -128,9 +154,23 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   useEffect(() => {
+    var cartId;
+    if (typeof route.params.cartNameSelecteds != "undefined") {
+      // alert("fdsf:" + route.params.cartNameSelecteds);
+      setCartNameSelected(route.params.cartNameSelecteds);
+      cartId = route.params.cartNameSelecteds;
+    } else {
+      // alert("route.params.cartNameSelecteds");
+      setCartNameSelected("");
+      cartId = "";
+    }
+
+    console.log(
+      "Payment details route param cart name :" + route.params.cartNameSelecteds
+    );
     const unsubscribe = navigation.addListener("focus", () => {
       getShippingAddress();
-      getUserIdAndLocationId();
+      getUserIdAndLocationId(cartId);
 
       const shippingAddress = new Address(
         addressLine1,
@@ -185,6 +225,7 @@ export default ({ navigation }): React.ReactElement => {
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.error("FAILED IN PLACING ORDER error " + error);
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        setIsLoading(false);
       });
   };
 

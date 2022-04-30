@@ -32,14 +32,14 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
     //     navigation.navigate("ProductSelector");
     //   },
     // },
-    // {
-    //   title: "Rewards",
-    //   icon: GithubIcon,
-    //   onPress: () => {
-    //     navigation.toggleDrawer();
-    //     navigation.navigate("Rewards");
-    //   },
-    // },
+    {
+      title: "Rewards",
+      icon: GithubIcon,
+      onPress: () => {
+        navigation.toggleDrawer();
+        navigation.navigate("Rewards");
+      },
+    },
     // {
     //   title: "Offers",
     //   icon: GithubIcon,

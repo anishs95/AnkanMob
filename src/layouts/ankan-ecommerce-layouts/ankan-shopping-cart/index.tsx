@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Spinner from "react-native-loading-spinner-overlay";
 import {
   Button,
   Layout,
@@ -32,8 +33,8 @@ const initialProducts: Product[] = [];
 export default ({ navigation }): React.ReactElement => {
   const [cartList, setCartList] = useState([]);
   const [cartId, setCartId] = useState();
-  var [place, setPlace] = React.useState<string>();
-  const [isLoading2, setIsLoading2] = React.useState<boolean>(true);
+  var [cartNameSelected, setCartNameSelected] = React.useState<string>();
+  const [isLoading2, setIsLoading2] = React.useState<boolean>(false);
   const [userId, setUserId] = React.useState<string>();
   const [isCartEmpty, setCartEmpty] = React.useState<boolean>(true);
   const [cartSize, setCartSize] = React.useState<number>();
@@ -46,6 +47,7 @@ export default ({ navigation }): React.ReactElement => {
   const [visible, setVisible] = useState(false);
   const [visible2, setVisible2] = useState(false);
   const [sharePhoneNumber, setSharePhoneNumber] = React.useState<string>();
+  const [cusLocationId, setCusLocationId] = React.useState<string>();
   const showDialog = () => {
     setVisible(true);
   };
@@ -59,6 +61,7 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const handleSave = () => {
+    setIsLoading2(true);
     console.log(cartName);
     fetch(
       "https://api.dev.ankanchem.net/cart/api/Cart/SaveCart/" +
@@ -79,15 +82,19 @@ export default ({ navigation }): React.ReactElement => {
       .then((json) => {
         setData(json);
         console.log("[CART NAME SAVED]" + json);
+
+        setIsLoading2(false);
+        alert("SUCCESS");
         navigation && navigation.navigate("ProductDetails");
         return json;
       })
       .catch((error) => {
+        alert("Something went wrong Try Again");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.error("Save  Cart Name error " + error);
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
       });
-
+    setIsLoading2(false);
     setVisible(false);
   };
 
@@ -115,10 +122,12 @@ export default ({ navigation }): React.ReactElement => {
       .then((json) => {
         setData(json);
         console.log("[CART NAME SAVED]" + json);
+        alert("SUCCESS");
         navigation && navigation.navigate("ProductDetails");
         return json;
       })
       .catch((error) => {
+        alert("Something went wrong Try Again");
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         console.error("Save  Cart Name error " + error);
         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -141,20 +150,26 @@ export default ({ navigation }): React.ReactElement => {
           "https://api.dev.ankanchem.net/cart/api/Cart/GetUserCartList/" + res
         )
           .then((response) => response.json())
-          .then((json) => setCartList(json))
+          .then((json) => {
+            setCartList(json);
+            // console.log(json[0].cartName);
+          })
           .catch((error) => console.error(error));
       }
     });
   }, []);
 
-  const getCartUrl = (usrIds, cartId) => {
+  const getCartUrl = async (usrIds, cartId) => {
+    const lcnId = await AsyncStorage.getItem("locationId");
+    // alert(lcnId);
+    setCusLocationId(lcnId);
     var URL;
     if (cartId == null) {
       URL =
         "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
         usrIds +
         "/" +
-        "<location>";
+        lcnId;
       setDefaultCart(true);
     } else {
       URL =
@@ -162,27 +177,30 @@ export default ({ navigation }): React.ReactElement => {
         userId +
         "/" +
         cartId +
-        "/<location>";
+        "/" +
+        lcnId;
     }
     return URL;
   };
 
   const getCartItems = async (usrIds, cartId) => {
     //alert(URL);
-    const URLs = getCartUrl(usrIds, cartId);
-
+    setIsLoading2(true);
+    const URLs = await getCartUrl(usrIds, cartId);
+    //  alert(URLs);
     fetch(URLs)
       .then((response) => response.json())
       .then((json) => {
         console.log("Lengthss123");
-        if (json.items == null) {
+        //alert(json.items);
+        if (json.items == null || json.items == "") {
           //  alert("Empty Cart");
           setCartSize(0);
           setCartEmpty(true);
           setItems([]);
           setCartItemsFunction([]);
         } else {
-          // alert(json.items.length);
+          //   alert(json.items.length);
           setCartSize(json.items.length);
           if (json.items.length > 0) {
             setCartEmpty(false);
@@ -194,7 +212,10 @@ export default ({ navigation }): React.ReactElement => {
         setData(json);
       })
       .catch((error) => console.error("err 12312 :" + error))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading2(false);
+        setIsLoading(false);
+      });
   };
 
   const setCartItemsFunction = async (items) => {
@@ -240,22 +261,26 @@ export default ({ navigation }): React.ReactElement => {
     setProducts([...productss]);
     console.log("USR ID 3 " + userId);
     console.log("Cart ID 3 " + cartId);
+    console.log("cusLocationId ID 3 " + cusLocationId);
+    console.log("Product ID 3 " + JSON.stringify(product));
     var URL;
-    if (cartId == null) {
+
+    if (cartId == null || typeof cartId == "undefined") {
       URL =
         "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
         userId +
         "/" +
-        "<location>";
+        cusLocationId;
     } else {
       URL =
         "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
         userId +
         "/" +
         cartId +
-        "/<location>";
+        "/" +
+        cusLocationId;
     }
-    //  alert(URL);
+    // alert(URL);
     fetch(URL, {
       method: "PUT",
       headers: {
@@ -268,6 +293,7 @@ export default ({ navigation }): React.ReactElement => {
         ProductId: product.id,
         ProductName: product.name,
         Quantity: product.quantity,
+        Color: product.colorsObject,
       }),
     })
       .then((response) => response.json())
@@ -315,7 +341,8 @@ export default ({ navigation }): React.ReactElement => {
   );
 
   const onCheckoutButtonPress = (): void => {
-    navigation && navigation.navigate("Payment");
+    navigation &&
+      navigation.navigate("Payment", { cartNameSelecteds: cartNameSelected });
   };
 
   return (
@@ -334,7 +361,7 @@ export default ({ navigation }): React.ReactElement => {
             textStyle={styles.dropdown_2_text}
             onSelect={(index3, value3) => {
               setCartId(cartList[index3].cartId);
-              setPlace(value3);
+              setCartNameSelected(cartList[index3].cartId);
               if (value3 === "Default") {
                 setDefaultCart(true);
               } else {
@@ -409,6 +436,13 @@ export default ({ navigation }): React.ReactElement => {
             </View>
           )}
         </Layout>
+        <Spinner
+          overlayColor="rgba(0, 0, 0, 0.6)"
+          size="large"
+          visible={isLoading2}
+          textContent={"Processing..."}
+          textStyle={styles.spinnerTextStyle}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -455,5 +489,8 @@ const styles = StyleService.create({
     borderRadius: 5,
     padding: 8,
     paddingLeft: 20,
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -18,68 +18,39 @@ import {
 } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
 import { Product, ProductOption } from "./extra/data";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const product: Product = Product.centralParkApartment();
 
 export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [totalEarnedReward, setTotalEarnedReward] = React.useState<string>();
 
   const onBookButtonPress = (): void => {};
+  useEffect(() => {
+    console.log("called");
+    getUserId();
+  }, [navigation]);
 
-  const renderImageItem = (
-    info: ListRenderItemInfo<ImageSourcePropType>
-  ): React.ReactElement => (
-    <Image style={styles.imageItem} source={info.item} />
-  );
-
-  const renderOptionItemIcon = (
-    style: ImageStyle,
-    icon: string
-  ): React.ReactElement => <Icon {...style} name={icon} />;
-
-  const renderOptionItem = (
-    option: ProductOption,
-    index: number
-  ): React.ReactElement => (
-    <Button
-      key={index}
-      style={styles.optionItem}
-      appearance="ghost"
-      size="small"
-      accessoryLeft={(style: ImageStyle) =>
-        renderOptionItemIcon(style, option.icon)
-      }
-    >
-      {option.title}
-    </Button>
-  );
-
-  const renderDetailItem = (
-    detail: string,
-    index: number
-  ): React.ReactElement => (
-    <Button
-      key={index}
-      style={styles.detailItem}
-      appearance="outline"
-      size="tiny"
-    >
-      {detail}
-    </Button>
-  );
-
-  const renderBookingFooter = (): React.ReactElement => (
-    <View>
-      <Text category="s1">Facilities</Text>
-      <View style={styles.detailsList}>
-        {product.details.map(renderDetailItem)}
-      </View>
-      <View style={styles.optionList}>
-        {product.options.map(renderOptionItem)}
-      </View>
-    </View>
-  );
-
+  const getUserId = async () => {
+    try {
+      const usrId = await AsyncStorage.getItem("userId");
+      fetch(
+        "https://api.dev.ankanchem.net/rewards/api/Rewards/GetUserReward/" +
+          usrId
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          setTotalEarnedReward("₹ " + json.totalEarnedReward + "/-");
+          console.log(JSON.stringify(json.totalEarnedReward));
+        })
+        .catch((error) => console.error("error44" + error))
+        .finally(() => setIsLoading(false));
+    } catch (e) {
+      console.log("error in reading data ");
+    }
+  };
   return (
     <ScrollView style={styles.container}>
       <ImageOverlay style={styles.image} source={product.primaryImage} />
@@ -93,32 +64,19 @@ export default ({ navigation }): React.ReactElement => {
           {product.title}
         </Text>
         <Text style={styles.rentLabel} appearance="hint" category="p2">
-          Place rewards
+          Total Reward
         </Text>
         <Text style={styles.priceLabel} category="h6">
-          ₹ 3000/-
+          {totalEarnedReward}
           {/* {product.price.formattedValue} */}
         </Text>
-        <Button style={styles.bookButton} onPress={onBookButtonPress}>
+        {/* <Button style={styles.bookButton} onPress={onBookButtonPress}>
           Claim
-        </Button>
+        </Button> */}
       </Card>
-      {/* <Text style={styles.sectionLabel} category="s1">
-        About
-      </Text>
-      <Text style={styles.description} appearance="hint">
-        {product.description}
-      </Text>
       <Text style={styles.sectionLabel} category="s1">
-        Photos
-      </Text> */}
-      {/* <List
-        contentContainerStyle={styles.imagesList}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        data={product.images}
-        renderItem={renderImageItem}
-      /> */}
+        Reward Status
+      </Text>
     </ScrollView>
   );
 };
@@ -135,7 +93,7 @@ const themedStyles = StyleService.create({
     margin: 16,
   },
   title: {
-    width: "65%",
+    width: "85%",
   },
   rentLabel: {
     marginTop: 24,

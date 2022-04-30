@@ -5,7 +5,7 @@ import { SafeAreaLayout } from "../../components/safe-area-layout.component";
 import { ArrowIosBackIcon } from "../../components/icons";
 import ContentView from "../../layouts/ankan-ecommerce-layouts/ankan-payment";
 
-export const PaymentScreen = ({ navigation }): React.ReactElement => {
+export const PaymentScreen = ({ navigation, route }): React.ReactElement => {
   const renderBackAction = (): React.ReactElement => (
     <TopNavigationAction icon={ArrowIosBackIcon} onPress={navigation.goBack} />
   );
@@ -13,7 +13,7 @@ export const PaymentScreen = ({ navigation }): React.ReactElement => {
   return (
     <SafeAreaLayout style={styles.container} insets="top">
       <TopNavigation title="Payment" accessoryLeft={renderBackAction} />
-      <ContentView navigation={navigation} />
+      <ContentView navigation={navigation} route={route} />
     </SafeAreaLayout>
   );
 };
