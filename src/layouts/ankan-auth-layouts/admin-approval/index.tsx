@@ -114,6 +114,7 @@ export default ({ navigation }): React.ReactElement => {
           //   JSON.stringify(json.activationSecret)
           // );
           AsyncStorage.setItem("screenState", "one");
+          AsyncStorage.setItem("userName", json.userName);
           // navigation && navigation.navigate("AdminApproval");
           // setIsLoading(false);
         } else {

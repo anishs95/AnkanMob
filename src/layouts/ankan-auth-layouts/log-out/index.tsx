@@ -105,7 +105,9 @@ export default ({ navigation }): React.ReactElement => {
         // console.log(json.movies);
         // AsyncStorage.setItem("activationId", json.activationId);
         // AsyncStorage.setItem("userId", json.userId);
+
         if (json.isPhoneVarified) {
+          AsyncStorage.setItem("userName", json.userName);
           navigation && navigation.navigate("OtpVerified");
         } else {
           alert("invalid OTP Entered");

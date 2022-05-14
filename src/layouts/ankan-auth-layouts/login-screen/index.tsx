@@ -51,6 +51,7 @@ export default ({ navigation }): React.ReactElement => {
           AsyncStorage.setItem("activationId", json.activationId);
           AsyncStorage.setItem("userId", json.userId);
           AsyncStorage.setItem("locationId", locationId);
+          AsyncStorage.setItem("place", place);
           navigation && navigation.navigate("OtpScreen");
           // setData(json);
           return json;
@@ -77,7 +78,7 @@ export default ({ navigation }): React.ReactElement => {
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
         visible={isLoading}
-        textContent={"Loging..."}
+        textContent={"Logging..."}
         textStyle={styles.spinnerTextStyle}
       />
       <View style={[styles.container, styles.formContainer]}>

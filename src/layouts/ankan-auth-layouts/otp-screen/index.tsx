@@ -82,6 +82,7 @@ export default ({ navigation }): React.ReactElement => {
             AsyncStorage.setItem("userName", json.userName);
             AsyncStorage.setItem("activationId", json.activationId);
             AsyncStorage.setItem("activationSecret", json.activationSecret);
+            AsyncStorage.setItem("userName", json.userName);
             if (json.isActive) {
               AsyncStorage.setItem("screenState", "three");
               navigation && navigation.navigate("Home");

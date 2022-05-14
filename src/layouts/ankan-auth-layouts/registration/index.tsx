@@ -93,6 +93,7 @@ export default ({ navigation }): React.ReactElement => {
             AsyncStorage.setItem("userId", json.userId);
             AsyncStorage.setItem("locationId", locationId);
             AsyncStorage.setItem("phoneNumber", phno);
+            AsyncStorage.setItem("place", place);
             AsyncStorage.setItem("screenState", "one");
             console.log(
               "Registration completd..." +
@@ -106,9 +107,11 @@ export default ({ navigation }): React.ReactElement => {
           return json;
         })
         .catch((error) => {
+          alert("Already registerd user , Try Log IN");
           console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
           console.error("Registration error " + error);
           console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+          setIsLoading(false);
         });
     }
   };

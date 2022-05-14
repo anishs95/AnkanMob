@@ -18,6 +18,7 @@ import { KeyboardAvoidingView } from "./extra/keyboard-avoiding-view.component";
 import { CommentList } from "./extra/comment-list.component";
 import { Product, ProductColor } from "./extra/data";
 import Accordion from "react-native-collapsible/Accordion";
+import { useIsFocused } from "@react-navigation/native";
 
 const keyboardOffset = (height: number): number =>
   Platform.select({
@@ -40,7 +41,7 @@ export default ({ navigation, props }): React.ReactElement => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isColorsAvail, setColorsAvail] = React.useState<boolean>(false);
   const [locationId, setLocationId] = React.useState<string>();
-
+  const isFocused = useIsFocused();
   const SECTIONS = [
     {
       title: "   Consumption Calculator +",
@@ -118,6 +119,10 @@ export default ({ navigation, props }): React.ReactElement => {
   };
 
   useEffect(() => {
+    // alert("useeffect");
+    if (isFocused) {
+      getInitialData();
+    }
     AsyncStorage.getItem("@cartProductId", (err, res) => {
       if (!res) {
         console.log("cart is empty");
@@ -148,8 +153,8 @@ export default ({ navigation, props }): React.ReactElement => {
       }
     });
     getData();
-  }, []);
-
+  }, [isFocused]);
+  const getInitialData = async () => {};
   // console.log("Item from parent about product is " + );
   const onCartButtonPress = (): void => {
     navigation && navigation.navigate("ShoppingCart");

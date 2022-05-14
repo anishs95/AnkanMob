@@ -11,6 +11,7 @@ import { HomeDrawer } from "../scenes/home/home-drawer.component";
 import { AnkanOffersScreen } from "../scenes/ankan-ecommerce-scenes/ankan-offers.component";
 import { AnkanRewardScreen } from "../scenes/ankan-ecommerce-scenes/ankan-rewards.component";
 import { AnkanOrderScreen } from "../scenes/ankan-ecommerce-scenes/ankan-orders.components";
+import { AnkanOrderDetailScreen } from "../scenes/ankan-ecommerce-scenes/ankan-order-details.components";
 import { ProductListScreen } from "../scenes/ankan-ecommerce-scenes/product-list.component";
 import { ProductDetailsScreen } from "../scenes/ankan-ecommerce-scenes/product-details.component";
 import { AddNewAddressScreen } from "../scenes/ankan-ecommerce-scenes/ankan-add-new-card.component";
@@ -77,7 +78,10 @@ export const AnkanHome = (): React.ReactElement => (
       <Drawer.Screen name="Rewards" component={AnkanRewardScreen} />
       <Drawer.Screen name="Offers" component={AnkanOffersScreen} />
       <Drawer.Screen name="Orders" component={AnkanOrderScreen} />
+      <Drawer.Screen name="ProductDetails" component={ProductDetailsScreen} />
+      <Drawer.Screen name="OrderDetails" component={AnkanOrderDetailScreen} />
       <Drawer.Screen name="Libraries" component={LibrariesScreen} />
+
       {/* <Drawer.Screen name="Libraries" component={LibrariesScreen} /> */}
     </Drawer.Navigator>
   </>

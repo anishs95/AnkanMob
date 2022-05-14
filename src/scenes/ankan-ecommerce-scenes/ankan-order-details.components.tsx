@@ -7,9 +7,12 @@ import {
   BookmarkIcon,
   BookmarkOutlineIcon,
 } from "../../components/icons";
-import ContentView from "../../layouts/ankan-ecommerce-layouts/ankan-orders";
+import ContentView from "../../layouts/ankan-ecommerce-layouts/ankan-order-details";
 
-export const AnkanOrderScreen = ({ navigation, route }): React.ReactElement => {
+export const AnkanOrderDetailScreen = ({
+  navigation,
+  route,
+}): React.ReactElement => {
   const [bookmarked, setBookmarked] = React.useState<boolean>(false);
 
   const onBookmarkActionPress = (): void => {

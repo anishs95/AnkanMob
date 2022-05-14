@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import {
   Image,
   ImageSourcePropType,
-  ImageStyle,
+  Dimensions,
   ListRenderItemInfo,
   ScrollView,
   View,
@@ -10,10 +10,11 @@ import {
 import {
   Button,
   Card,
-  Icon,
+  Divider,
   List,
   StyleService,
   Text,
+  ListItem,
   useStyleSheet,
 } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
@@ -26,6 +27,11 @@ export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [isLoading, setIsLoading] = React.useState(false);
   const [totalEarnedReward, setTotalEarnedReward] = React.useState<string>();
+  const [data, setData] = React.useState<[]>();
+  // const data = new Array(8).fill({
+  //   title: "Item",
+  //   description: "Description for Item",
+  // });
 
   const onBookButtonPress = (): void => {};
   useEffect(() => {
@@ -47,10 +53,37 @@ export default ({ navigation }): React.ReactElement => {
         })
         .catch((error) => console.error("error44" + error))
         .finally(() => setIsLoading(false));
+
+      fetch(
+        "https://api.dev.ankanchem.net/rewards/api/Rewards/GetRewardsByUser/" +
+          usrId
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          console.log("//////////////////HISTORY/////////////////////");
+          setData(json);
+          console.log(JSON.stringify(json));
+        })
+        .catch((error) => console.error("error44" + error))
+        .finally(() => setIsLoading(false));
     } catch (e) {
       console.log("error in reading data ");
     }
   };
+
+  const renderItem2 = ({ item, index }) => (
+    <ListItem title={`${item.createdDate} `} description={`${item.status}`} />
+  );
+
+  const renderItem = ({ item, index }) => (
+    <Card status="success" style={styles.card}>
+      <Text>Created Date : {`${item.createdDate.substring(0, 10)} `}</Text>
+      <Text>Purchase Amount : ₹{`${item.purchaseAmount}/- `}</Text>
+      <Text>Points : {`${item.points} `}</Text>
+      <Text>Status : {`${item.status} `}</Text>
+    </Card>
+  );
+
   return (
     <ScrollView style={styles.container}>
       <ImageOverlay style={styles.image} source={product.primaryImage} />
@@ -77,6 +110,12 @@ export default ({ navigation }): React.ReactElement => {
       <Text style={styles.sectionLabel} category="s1">
         Reward Status
       </Text>
+      <List
+        style={styles.container}
+        data={data}
+        ItemSeparatorComponent={Divider}
+        renderItem={renderItem}
+      />
     </ScrollView>
   );
 };
@@ -100,6 +139,10 @@ const themedStyles = StyleService.create({
   },
   priceLabel: {
     marginTop: 8,
+  },
+  card: {
+    margin: 16,
+    borderRadius: 8,
   },
   bookButton: {
     position: "absolute",

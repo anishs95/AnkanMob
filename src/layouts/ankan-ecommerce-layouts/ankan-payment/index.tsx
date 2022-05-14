@@ -33,6 +33,8 @@ export default ({ navigation, route }): React.ReactElement => {
   const [locationId, setLocationId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [cartNameSelected, setCartNameSelected] = React.useState<string>();
+  const [place, setPlace] = React.useState<string>();
+  const [userName, setUserName] = React.useState<string>();
 
   const [addressDetails, setAddressDetails] = React.useState([]);
 
@@ -142,9 +144,13 @@ export default ({ navigation, route }): React.ReactElement => {
     try {
       const usrId = await AsyncStorage.getItem("userId");
       const lcnId = await AsyncStorage.getItem("locationId");
+      const username = await AsyncStorage.getItem("userName");
+      const place = await AsyncStorage.getItem("place");
       setUserId(usrId);
       setLocationId(lcnId);
       getCartDetails(usrId, lcnId, cartId);
+      setUserName(username);
+      setPlace(place);
       console.log(
         "User Id  and lcn id in Payment Screen " + usrId + " loc --> " + lcnId
       );
@@ -203,6 +209,8 @@ export default ({ navigation, route }): React.ReactElement => {
       body: JSON.stringify({
         UserId: userId,
         LocationId: locationId,
+        UserName: userName,
+        LocationName: place,
         Items: items,
         BillingAddress: addressDetails,
         ShippingAddress: addressDetails,

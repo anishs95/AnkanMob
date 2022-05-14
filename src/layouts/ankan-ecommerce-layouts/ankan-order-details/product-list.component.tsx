@@ -33,7 +33,7 @@ export const ProductListScreen = ({
 
   const getOrderStatusByUserID = async (userids) => {
     await fetch(
-      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByUser/" +
+      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/62711ac41b321cb410eada02" +
         userids,
       {
         method: "GET",
@@ -58,63 +58,107 @@ export const ProductListScreen = ({
       .finally(() => setLoading(false));
   };
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      const getFishAndChips = async () => {
-        await AsyncStorage.getItem("userId", (err, res) => {
-          if (!res) {
-            console.log("userId id is empty");
-          } else {
-            setUserId(res);
-            getOrderStatusByUserID(res);
-            console.log("userId id fetched " + res);
-          }
-        });
-      };
-      getFishAndChips();
-    });
+    //  alert("Order Id" + route.params.orderId);
+    fetch(
+      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/" +
+        route.params.orderId,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer 1234",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setData(json);
+        console.log("orderd " + JSON.stringify(json));
+        // console.log("orderd length" + json.length);
 
-    return unsubscribe;
-  }, []);
+        return json;
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
+  }, [route]);
 
-  for (var i = 0; i < data.length; i++) {
-    // console.log("itemss123" + JSON.stringify(data[i].items));
-    // data2.concat(data[i]);
-    // console.log("impsder : " + i);
-    // console.log(data[i].items);
-    console.log("where : " + i);
-  }
-  var products: Product[] = [];
+  // for (var i = 0; i < data.length; i++) {
+  //   // console.log("itemss123" + JSON.stringify(data[i].items));
+  //   // data2.concat(data[i]);
+  //   // console.log("impsder : " + i);
+  //   // console.log(data[i].items);
+  //   console.log("where : " + i);
+  // }
+
+  var products: Product[] = data.items;
   var d = 0;
+  console.log("where dataxXX: " + JSON.stringify(data.items));
   for (var i = 0; i < data.length; i++) {
-    console.log("where datax: " + JSON.stringify(data[i].items.length));
-    products[i] = data[i];
-    for (var j = 0; j < data[i].items.length; j++) {
-      console.log("hdsadj" + JSON.stringify(data[i]));
-      d++;
-    }
+    console.log("where dataxXX: " + JSON.stringify(data[i].items.length));
+    // for (var j = 0; j < data[i].items.length; j++) {
+    //   products[d] = data[i].items[j];
+    //   d++;
+    // }
   }
 
-  for (var i = 0; i < products.length; i++) {
-    console.log("orderd2 " + JSON.stringify(products[i]));
-  }
+  // for (var i = 0; i < products.length; i++) {
+  //   console.log("orderd2 " + JSON.stringify(products[i]));
+  // }
 
-  const displayProducts: Product[] = products.filter(
-    (product) => checkSwitch(product.status) === route.name
-  );
+  // const displayProducts: Product[] = products.filter(
+  //   (product) => checkSwitch(product.status) === route.name
+  // );
 
   const onItemPress = (index: number): void => {
-    //   alert(index);
-    navigation.navigate("OrderDetails", { orderId: index });
+    //alert(index);
+    fetch(
+      "https://api.dev.ankanchem.net/products/api/Product/GetProduct/" + index,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer 1234",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        const storeData = async (value) => {
+          try {
+            const jsonValue = JSON.stringify(value);
+            console.log("product list 2223:" + jsonValue);
+            await AsyncStorage.setItem("@prdDetails", jsonValue);
+            console.log("sucess in storing values of product details");
+            navigation && navigation.navigate("ProductDetails");
+          } catch (e) {
+            // saving error
+            console.log("failed in storing values of product details" + e);
+          }
+        };
+        storeData(json);
+
+        return json;
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
+
+    // navigation && navigation.navigate("ProductDetails3");
   };
 
   const renderItemHeader = (
     info: ListRenderItemInfo<Product>
   ): React.ReactElement => (
     <View style={styles.header}>
-      {/* <ImageBackground
+      <ImageBackground
         style={styles.itemHeader}
         source={{ uri: info.item.imageUrl }}
-      /> */}
+      />
       <View style={styles.verticleLine}></View>
       <View>
         <Text
@@ -123,17 +167,17 @@ export const ProductListScreen = ({
           adjustsFontSizeToFit
           category="s1"
         >
-          Order ID : {info.item.id}
+          {info.item.productName}
         </Text>
-        {/* <Text style={styles.contentText} category="c1">
-          Order ID :{info.item.id}
-        </Text> */}
-        {/* <Text style={styles.contentText} category="c1">
+        <Text style={styles.contentText} category="c1">
+          Total : ₹ {info.item.itemTotal}
+        </Text>
+        <Text style={styles.contentText} category="c1">
           Colour : {info.item.color ? info.item.color.name : "nil"}
         </Text>
         <Text style={styles.contentText} category="c1">
           Quantity : {info.item.quantity}
-        </Text> */}
+        </Text>
       </View>
     </View>
   );
@@ -145,16 +189,11 @@ export const ProductListScreen = ({
       style={styles.productItem}
       header={() => renderItemHeader(info)}
       //  footer={() => renderItemFooter(info)}
-      onPress={() => onItemPress(info.item.id)}
+      onPress={() => onItemPress(info.item.productId)}
     >
-      <View>
-        <Text status="info" category="s1">
-          Order Date : {info.item.orderDate.substring(0, 10)}
-        </Text>
-        <Text status="danger" category="s1">
-          Total Cost : ₹ {info.item.grandTotal}
-        </Text>
-      </View>
+      <Text status="info" category="label">
+        {info.item.status}
+      </Text>
     </Card>
   );
 
@@ -188,13 +227,13 @@ export const ProductListScreen = ({
       <Spinner
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
-        visible={isLoading}
+        visible={false}
         textContent={"Order Details Loading..."}
         textStyle={styles.spinnerTextStyle}
       />
       <List
         contentContainerStyle={styles.productList}
-        data={(displayProducts.length && displayProducts) || products}
+        data={products}
         numColumns={1}
         renderItem={renderProductItem}
       />
