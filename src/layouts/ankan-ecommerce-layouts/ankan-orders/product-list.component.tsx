@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Dimensions,
-  ImageBackground,
+  Image,
   ListRenderItemInfo,
   View,
+  ImageStyle,
+  ImageSourcePropType,
 } from "react-native";
 import {
   Button,
@@ -27,6 +29,8 @@ export const ProductListScreen = ({
   const styles = useStyleSheet(themedStyles);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  var [imgData, setImgData] = useState([]);
+  var [imgData2, setImgData2] = useState([]);
   const [status, setStatus] = useState();
   const componentMounted = useRef(true);
   const [userId, setUserId] = useState<string>();
@@ -94,18 +98,49 @@ export const ProductListScreen = ({
     }
   }
 
-  for (var i = 0; i < products.length; i++) {
-    console.log("orderd2 " + JSON.stringify(products[i]));
-  }
+  // for (var i = 0; i < products.length; i++) {
+  //   console.log("orderd2 " + JSON.stringify(products[i]));
+  //   var i = 0;
+  //   products[i].items.forEach(function (arrayItem) {
+  //     var x = arrayItem.imageUrl;
+  //     if (x != null) {
+  //       console.log("Image in array : " + x);
+  //       imgData[i] = x;
+  //       i++;
+  //     }
+  //   });
+  // }
+  const onItemPress = (index: number): void => {
+    //   alert(index);
+    navigation.navigate("OrderDetails", { orderId: index });
+  };
 
   const displayProducts: Product[] = products.filter(
     (product) => checkSwitch(product.status) === route.name
   );
 
-  const onItemPress = (index: number): void => {
-    //   alert(index);
-    navigation.navigate("OrderDetails", { orderId: index });
+  const fetchimage = (index: []): any[] => {
+    imgData2 = [];
+    console.log("Image in array nexDFEs : " + index.length);
+    var i = 0;
+    index.forEach(function (arrayItem) {
+      var x = arrayItem.imageUrl;
+      if (x != null) {
+        console.log("Image in array next : " + x);
+        imgData2[i] = x;
+        i++;
+      }
+    });
+    console.log("Image in array next 123: " + imgData2);
+    return imgData2;
   };
+  const renderImageItem = (
+    info: ListRenderItemInfo<ImageSourcePropType>
+  ): React.ReactElement => (
+    <>
+      <Image style={styles.imageItem} source={{ uri: info.item }} />
+    </>
+  );
 
   const renderItemHeader = (
     info: ListRenderItemInfo<Product>
@@ -141,21 +176,47 @@ export const ProductListScreen = ({
   const renderProductItem = (
     info: ListRenderItemInfo<Product>
   ): React.ReactElement => (
-    <Card
-      style={styles.productItem}
-      header={() => renderItemHeader(info)}
-      //  footer={() => renderItemFooter(info)}
-      onPress={() => onItemPress(info.item.id)}
-    >
-      <View>
-        <Text status="info" category="s1">
-          Order Date : {info.item.orderDate.substring(0, 10)}
-        </Text>
-        <Text status="danger" category="s1">
-          Total Cost : ₹ {info.item.grandTotal}
-        </Text>
-      </View>
-    </Card>
+    <>
+      <Card
+        style={styles.productItem}
+        header={() => renderItemHeader(info)}
+        //  footer={() => renderItemFooter(info)}
+      >
+        <View>
+          <Text status="info" category="s1">
+            Order Date : {info.item.orderDate.substring(0, 10)}
+          </Text>
+          <Text status="danger" category="s1">
+            Total Cost : ₹ {info.item.grandTotal}
+          </Text>
+        </View>
+        <List
+          nestedScrollEnabled={true}
+          contentContainerStyle={styles.imagesList}
+          horizontal={true}
+          pagingEnabled={true}
+          showsHorizontalScrollIndicator={true}
+          //data={imgData}
+          data={fetchimage(info.item.items)}
+          renderItem={renderImageItem}
+        />
+        <Button
+          style={styles.detailbutton}
+          size="small"
+          onPress={() => onItemPress(info.item.id)}
+        >
+          Detail
+        </Button>
+      </Card>
+
+      <View
+        style={{
+          padding: 5,
+          borderBottomColor: "grey",
+          borderBottomWidth: 1,
+        }}
+      />
+    </>
   );
 
   function checkSwitch(param) {
@@ -184,7 +245,11 @@ export const ProductListScreen = ({
     }
   }
   return (
-    <View>
+    <View
+      style={{
+        marginBottom: 25,
+      }}
+    >
       <Spinner
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
@@ -251,5 +316,18 @@ const themedStyles = StyleService.create({
     fontSize: 10,
     fontWeight: "normal",
     paddingLeft: 10,
+  },
+  imagesList: {
+    margin: 10,
+    backgroundColor: "background-basic-color-2",
+  },
+  imageItem: {
+    width: 80,
+    height: 100,
+    borderRadius: 8,
+    marginHorizontal: 8,
+  },
+  detailbutton: {
+    marginTop: 10,
   },
 });

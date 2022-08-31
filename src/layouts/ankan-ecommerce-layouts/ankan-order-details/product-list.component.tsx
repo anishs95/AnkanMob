@@ -172,9 +172,16 @@ export const ProductListScreen = ({
         <Text style={styles.contentText} category="c1">
           Total : ₹ {info.item.itemTotal}
         </Text>
-        <Text style={styles.contentText} category="c1">
+        {info.item.color ? (
+          <Text style={styles.contentText} category="c1">
+            Colour : {info.item.color ? info.item.color.name : "nil"}
+          </Text>
+        ) : (
+          <></>
+        )}
+        {/* <Text style={styles.contentText} category="c1">
           Colour : {info.item.color ? info.item.color.name : "nil"}
-        </Text>
+        </Text> */}
         <Text style={styles.contentText} category="c1">
           Quantity : {info.item.quantity}
         </Text>
@@ -287,7 +294,7 @@ const themedStyles = StyleService.create({
     padding: 10,
   },
   contentText: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: "normal",
     paddingLeft: 10,
   },

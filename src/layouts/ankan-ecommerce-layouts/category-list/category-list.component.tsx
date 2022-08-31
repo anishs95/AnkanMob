@@ -144,7 +144,7 @@ export const CategoryListScreen = ({
       footer={() => renderItemFooter(info)}
       onPress={() => onItemPress2(info.item.id)}
     >
-      <Text style={styles.title} category="s1">
+      <Text allowFontScaling={false} style={styles.title} category="s1">
         {info.item.name}
       </Text>
     </Card>
@@ -201,6 +201,7 @@ const themedStyles = StyleService.create({
   title: {
     flex: 1,
     width: "100%",
+
     // borderWidth: 1,
 
     marginLeft: -10,

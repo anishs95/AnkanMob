@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
-import { ImageBackground, Platform, View, ScrollView } from "react-native";
+import {
+  ImageBackground,
+  Platform,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { MinusIcon, PlusIcon } from "./icons";
 import Spinner from "react-native-loading-spinner-overlay";
+import CustomAlert from "./CustomAlert";
 import {
   Button,
   Input,
@@ -44,17 +51,32 @@ export default ({ navigation, props }): React.ReactElement => {
   const isFocused = useIsFocused();
   const SECTIONS = [
     {
-      title: "   Consumption Calculator +",
+      title: "   Consumption Calculator",
       content: "Lorem ipsum...1",
     },
   ];
+  const [showDonationSuccessPopup, setShowDonationSuccessPopup] =
+    React.useState(false);
+  const [showDonationErrPopup, setShowDonationErrPopup] = React.useState(false);
 
   const _renderHeader = (section) => {
     return (
-      <View style={styles.header}>
+      <View
+        style={{
+          borderColor: "red",
+          borderWidth: 16,
+          marginHorizontal: 2,
+          borderRadius: 1,
+          backgroundColor: "red",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Text
-          style={styles.sectionLabel}
-          style={{ color: "blue" }}
+          // style={styles.sectionLabel}
+          style={{
+            color: "white",
+          }}
           category="h6"
         >
           {section.title}
@@ -68,6 +90,8 @@ export default ({ navigation, props }): React.ReactElement => {
     return (
       <View style={styles.consumptionContent}>
         <Input
+          //textStyle={{ fontSize: 10 }}
+
           placeholder="in sq.feet"
           label="Area"
           keyboardType="numeric"
@@ -79,7 +103,7 @@ export default ({ navigation, props }): React.ReactElement => {
           style={styles.calBags}
           onPress={onCalculateButtonPress}
           status="info"
-          size={"tiny"}
+          size={"large"}
         >
           Calculate
         </Button>
@@ -193,10 +217,16 @@ export default ({ navigation, props }): React.ReactElement => {
       .then((json) => {
         console.log("[PRODUCT DETAILS add-cart response]" + json);
         setIsLoading(false);
-        Toast.show("Item added to the bag", Toast.LONG, [
-          "RCTModalHostViewController",
-        ]);
-        // navigation && navigation.navigate("ShoppingCart");
+
+        setShowDonationSuccessPopup(true);
+        setTimeout(() => {
+          setShowDonationSuccessPopup(false);
+          navigation.popToTop();
+        }, 2000);
+        // Toast.show("Item added to the cart", Toast.LONG, [
+        //   "RCTModalHostViewController",
+        // ]);
+
         return json;
       })
       .catch((error) => {
@@ -283,9 +313,11 @@ export default ({ navigation, props }): React.ReactElement => {
       // setQuantity(Math.abs(parseInt(e)).toString());
     }
   };
+
   const renderHeader = (): React.ReactElement => (
-    <Layout style={styles.header}>
+    <Layout>
       <ImageBackground style={styles.image} source={{ uri: data.imageUri }} />
+
       <Layout style={styles.detailsContainer} level="1">
         <Text
           numberOfLines={1}
@@ -298,26 +330,31 @@ export default ({ navigation, props }): React.ReactElement => {
         <Text style={styles.price} category="h4">
           ₹ {data.price}
         </Text>
+
         <Text style={styles.description} appearance="hint">
           {data.description}
         </Text>
         <Text style={styles.sectionLabel} category="h6">
-          Size:
+          Size :{" "}
+          <Text style={styles.size} appearance="default">
+            {data.quantity} {data.unit}
+          </Text>
         </Text>
 
-        <Text style={styles.size} appearance="hint">
-          {data.quantity}
-        </Text>
-        <Text style={styles.sectionLabel} category="h6">
+        {/* <Text style={styles.sectionLabel} category="h6">
           Unit:
         </Text>
 
         <Text style={styles.size} appearance="hint">
           {data.unit}
-        </Text>
-        <Text style={styles.sectionLabel} category="h6">
-          Color:
-        </Text>
+        </Text> */}
+
+        {data.colors != null && (
+          <Text style={styles.sectionLabel} category="h6">
+            Color:
+          </Text>
+        )}
+
         <View>
           <ScrollView horizontal={true}>
             <RadioGroup
@@ -360,33 +397,35 @@ export default ({ navigation, props }): React.ReactElement => {
             onPress={onPlusButtonPress}
           />
         </View>
-        <View style={styles.actionContainer}>
-          {/* <Button
-            style={styles.actionButton}
-            size="large"
-            status="warning"
-            onPress={onCartButtonPress}
-          >
-            CART
-          </Button> */}
-          <Button
-            style={styles.actionButton}
-            size="large"
-            status="success"
-            onPress={onAddButtonPress}
-          >
-            ADD TO BAG
-          </Button>
-        </View>
+
+        {/* <View style={styles.actionContainer}></View> */}
+
+        <CustomAlert
+          displayMode={"success"}
+          displayMsg={"Item added to the cart"}
+          visibility={showDonationSuccessPopup}
+          dismissAlert={setShowDonationSuccessPopup}
+        />
+        <CustomAlert
+          displayMode={"failed"}
+          displayMsg={"Failed, Please try again"}
+          visibility={showDonationErrPopup}
+          dismissAlert={setShowDonationErrPopup}
+        />
+
+        <Accordion
+          align="center"
+          containerStyle={styles.sectionLabel1}
+          expandFromBottom={true}
+          sections={SECTIONS}
+          activeSections={activeSections}
+          //  renderSectionTitle={_renderSectionTitle}
+          renderHeader={_renderHeader}
+          renderContent={_renderContent}
+          onChange={_updateSections}
+        />
       </Layout>
-      <Accordion
-        sections={SECTIONS}
-        activeSections={activeSections}
-        //  renderSectionTitle={_renderSectionTitle}
-        renderHeader={_renderHeader}
-        renderContent={_renderContent}
-        onChange={_updateSections}
-      />
+
       <Spinner
         overlayColor="rgba(0, 0, 0, 0.6)"
         size="large"
@@ -398,17 +437,39 @@ export default ({ navigation, props }): React.ReactElement => {
   );
 
   return (
-    <KeyboardAvoidingView style={styles.container} offset={keyboardOffset}>
-      <CommentList
-        style={styles.commentList}
-        data={data.comments}
-        ListHeaderComponent={renderHeader()}
-      />
-    </KeyboardAvoidingView>
+    <View style={styles.container}>
+      <KeyboardAvoidingView offset={keyboardOffset}>
+        <CommentList
+          style={styles.commentList}
+          data={data.comments}
+          ListHeaderComponent={renderHeader()}
+        />
+      </KeyboardAvoidingView>
+
+      <View style={styles.containerView}>
+        <Button
+          style={styles.actionButton}
+          size="large"
+          status="success"
+          onPress={onAddButtonPress}
+        >
+          ADD TO CART
+        </Button>
+      </View>
+    </View>
   );
 };
 
 const themedStyles = StyleService.create({
+  containerView: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  containerView2: {
+    height: "80%",
+  },
   container: {
     flex: 1,
     backgroundColor: "background-basic-color-2",
@@ -429,15 +490,16 @@ const themedStyles = StyleService.create({
   description: {
     marginVertical: 16,
   },
-  commentList: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
+  commentList: {},
   header: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
+
   consumptionContent: {
-    margin: 16,
+    margin: 5,
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: "background-basic-color-4",
   },
 
   detailsContainer: {
@@ -450,6 +512,7 @@ const themedStyles = StyleService.create({
     marginTop: 24,
     left: 4,
     bottom: 8,
+    marginBottom: 50,
   },
   amount: {
     marginLeft: 10,
@@ -465,9 +528,9 @@ const themedStyles = StyleService.create({
   },
   disclaimer: {
     margin: 6,
-    marginBottom: 36,
+
     top: 14,
-    bottom: 24,
+
     fontSize: 12,
   },
 
@@ -486,13 +549,29 @@ const themedStyles = StyleService.create({
     marginHorizontal: -8,
     marginTop: 24,
   },
+  actionButton1: {
+    marginHorizontal: 18,
+    margineVertical: 30,
+    margin: 30,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: "91%",
+  },
   actionButton: {
-    flex: 1,
-    marginHorizontal: 8,
+    width: "90%",
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 15,
   },
   sectionLabel: {
     marginVertical: 8,
     fontWeight: "bold",
+  },
+  sectionLabel1: {
+    marginBottom: 58,
   },
   sectionLabelRev: {
     flexDirection: "row",
@@ -522,5 +601,11 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: "#FFF",
+  },
+  actionContainer2: {
+    flexDirection: "row",
+    marginHorizontal: 40,
+    marginTop: -224,
+    backgroundColor: "background-basic-color-2",
   },
 });

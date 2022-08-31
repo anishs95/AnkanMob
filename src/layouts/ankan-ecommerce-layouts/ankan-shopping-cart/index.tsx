@@ -8,6 +8,7 @@ import {
   BackHandler,
   Alert,
 } from "react-native";
+import CustomAlert from "./CustomAlert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
@@ -48,6 +49,12 @@ export default ({ navigation }): React.ReactElement => {
   const [visible2, setVisible2] = useState(false);
   const [sharePhoneNumber, setSharePhoneNumber] = React.useState<string>();
   const [cusLocationId, setCusLocationId] = React.useState<string>();
+  const [showDonationSuccessPopup, setShowDonationSuccessPopup] =
+    useState(false);
+  const [showDonationSuccessPopup2, setShowDonationSuccessPopup2] =
+    useState(false);
+  const [showDonationErrPopup, setShowDonationErrPopup] = React.useState(false);
+
   const showDialog = () => {
     setVisible(true);
   };
@@ -84,8 +91,13 @@ export default ({ navigation }): React.ReactElement => {
         console.log("[CART NAME SAVED]" + json);
 
         setIsLoading2(false);
-        alert("SUCCESS");
-        navigation && navigation.navigate("ProductDetails");
+        setShowDonationSuccessPopup(true);
+        setTimeout(() => {
+          setShowDonationSuccessPopup(false);
+          navigation && navigation.navigate("ProductDetails");
+        }, 2000);
+        // alert("SUCCESS");
+
         return json;
       })
       .catch((error) => {
@@ -122,8 +134,11 @@ export default ({ navigation }): React.ReactElement => {
       .then((json) => {
         setData(json);
         console.log("[CART NAME SAVED]" + json);
-        alert("SUCCESS");
-        navigation && navigation.navigate("ProductDetails");
+        setShowDonationSuccessPopup2(true);
+        setTimeout(() => {
+          setShowDonationSuccessPopup2(false);
+          navigation && navigation.navigate("ProductDetails");
+        }, 2000);
         return json;
       })
       .catch((error) => {
@@ -349,7 +364,7 @@ export default ({ navigation }): React.ReactElement => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Layout style={styles.container} level="2">
-          <ModalDropdown
+          {/* <ModalDropdown
             options={cartList.map((value, index) => {
               return value.cartName;
             })}
@@ -369,7 +384,7 @@ export default ({ navigation }): React.ReactElement => {
               }
               getCartItems(null, cartList[index3].cartId);
             }}
-          />
+          /> */}
           {/* <Text>{place}</Text> */}
           {isLoading ? (
             <ActivityIndicator size="large" color="red" />
@@ -380,7 +395,7 @@ export default ({ navigation }): React.ReactElement => {
                 renderItem={renderProductItem}
                 ListFooterComponent={renderFooter}
               />
-              {isDefaultCart ? (
+              {/* {isDefaultCart ? (
                 <Button
                   style={styles.checkoutButton}
                   size="medium"
@@ -398,15 +413,7 @@ export default ({ navigation }): React.ReactElement => {
                 >
                   SHARE CART
                 </Button>
-              )}
-              <Button
-                style={styles.checkoutButton}
-                size="medium"
-                disabled={isCartEmpty}
-                onPress={onCheckoutButtonPress}
-              >
-                CHECKOUT
-              </Button>
+              )} */}
 
               <Dialog.Container visible={visible} statusBarTranslucent>
                 <Dialog.Title>Provide Cart Name</Dialog.Title>
@@ -444,6 +451,26 @@ export default ({ navigation }): React.ReactElement => {
           textStyle={styles.spinnerTextStyle}
         />
       </ScrollView>
+      <CustomAlert
+        displayMode={"success"}
+        displayMsg={"Cart Name Saved"}
+        visibility={showDonationSuccessPopup}
+        dismissAlert={setShowDonationSuccessPopup}
+      />
+      <CustomAlert
+        displayMode={"success"}
+        displayMsg={"Cart Shared Success"}
+        visibility={showDonationSuccessPopup2}
+        dismissAlert={setShowDonationSuccessPopup2}
+      />
+      <Button
+        style={styles.checkoutButton}
+        size="giant"
+        disabled={isCartEmpty}
+        onPress={onCheckoutButtonPress}
+      >
+        CHECKOUT
+      </Button>
     </SafeAreaView>
   );
 };

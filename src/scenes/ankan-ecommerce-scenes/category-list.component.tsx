@@ -3,7 +3,8 @@ import { StyleSheet, Image, Alert, BackHandler } from "react-native";
 import { TopNavigation, TopNavigationAction } from "@ui-kitten/components";
 import { SafeAreaLayout } from "../../components/safe-area-layout.component";
 import { ArrowIosBackIcon, ShopingCartIcon } from "../../components/icons";
-import ContentView from "../../layouts/ankan-ecommerce-layouts/category-list";
+// import ContentView from "../../layouts/ankan-ecommerce-layouts/category-list";
+import ContentView from "../../layouts/ankan-ecommerce-layouts/category-list/index";
 import { MenuIcon } from "../../components/icons";
 
 export const CategoryListScreen = ({ navigation }): React.ReactElement => {
@@ -56,7 +57,7 @@ export const CategoryListScreen = ({ navigation }): React.ReactElement => {
   return (
     <SafeAreaLayout style={styles.container} insets="top">
       <TopNavigation
-        title="Ankan Store"
+        title="ANKAN STORE"
         accessoryLeft={renderDrawerAction}
         accessoryRight={renderBookmarkAction}
       />

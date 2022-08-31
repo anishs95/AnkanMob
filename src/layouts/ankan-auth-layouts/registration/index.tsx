@@ -81,6 +81,7 @@ export default ({ navigation }): React.ReactElement => {
           Email: email,
           PhoneNumber: phno,
           City: place,
+          roles: ["TileContractor"],
         }),
       })
         .then((response) => response.json())

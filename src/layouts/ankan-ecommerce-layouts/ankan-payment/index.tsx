@@ -16,6 +16,7 @@ import { CreditCardIcon, MoreVerticalIcon } from "./extra/icons";
 import { PaymentCard, Address } from "./extra/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
+import CustomAlert from "./CustomAlert";
 const paymentCards: PaymentCard[] = [PaymentCard.emilyClarckVisa()];
 
 export default ({ navigation, route }): React.ReactElement => {
@@ -37,7 +38,8 @@ export default ({ navigation, route }): React.ReactElement => {
   const [userName, setUserName] = React.useState<string>();
 
   const [addressDetails, setAddressDetails] = React.useState([]);
-
+  const [showDonationSuccessPopup, setShowDonationSuccessPopup] =
+    React.useState(false);
   const getCartDetails = async (userIds, lcnIds, cartId) => {
     var URL;
     // alert("GET CART :" + cartId);
@@ -125,8 +127,24 @@ export default ({ navigation, route }): React.ReactElement => {
         .then((response) => response.json())
         .then((json) => {
           console.log("Cart clearing Success ");
-          alert("Successfully Placed Order");
-          navigation && navigation.navigate("Category");
+          setShowDonationSuccessPopup(true);
+          setTimeout(() => {
+            setShowDonationSuccessPopup(false);
+
+            const storeData = async () => {
+              try {
+                await AsyncStorage.removeItem("@shippingAddress");
+                console.log("Address removed");
+              } catch (exception) {
+                console.log(exception);
+              }
+            };
+            storeData();
+            navigation && navigation.navigate("Category");
+          }, 2000);
+          // alert("Successfully Placed Order");
+          // alert("Successfully Placed Order");
+          //navigation && navigation.navigate("Category");
           return json;
         })
         .catch((error) => {
@@ -349,12 +367,9 @@ export default ({ navigation, route }): React.ReactElement => {
           </View>
         </View>
       ) : (
-        <Card style={styles.placeholderCard} onPress={onPlaceholderCardPress}>
-          <CreditCardIcon {...styles.creditCardIcon} />
-          <Text appearance="hint" category="s1">
-            Add New Address
-          </Text>
-        </Card>
+        <Button size="giant" onPress={onPlaceholderCardPress} status="warning">
+          Add Address
+        </Button>
       )}
     </Layout>
   );
@@ -375,9 +390,14 @@ export default ({ navigation, route }): React.ReactElement => {
         textContent={"Placing Order..."}
         textStyle={styles.spinnerTextStyle}
       />
-
+      <CustomAlert
+        displayMode={"success"}
+        displayMsg={"Successfully Placed Order"}
+        visibility={showDonationSuccessPopup}
+        dismissAlert={setShowDonationSuccessPopup}
+      />
       <Layout style={styles.buyButtonContainer}>
-        <Button size="medium" onPress={onBuyButtonPress}>
+        <Button size="giant" onPress={onBuyButtonPress}>
           BUY
         </Button>
       </Layout>
@@ -445,9 +465,9 @@ const themedStyles = StyleService.create({
   placeholderCard: {
     justifyContent: "center",
     alignItems: "center",
-    height: 162,
+    height: 70,
     margin: 8,
-    backgroundColor: "background-basic-color-3",
+    backgroundColor: "blue",
   },
   creditCardIcon: {
     alignSelf: "center",

@@ -25,6 +25,6 @@ const TopTabs = createMaterialTopTabNavigator();
 export default (): React.ReactElement => (
   <TopTabs.Navigator tabBar={(props) => <ProductsTabBar {...props} />}>
     <TopTabs.Screen name="Categories" component={CategoryListScreen} />
-    <TopTabs.Screen name="P.Selector" component={ProductSelector} />
+    {/* <TopTabs.Screen name="P.Selector" component={ProductSelector} /> */}
   </TopTabs.Navigator>
 );

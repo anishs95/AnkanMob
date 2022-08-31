@@ -10,7 +10,7 @@ import {
   StyleService,
   useStyleSheet,
 } from "@ui-kitten/components";
-import { KeyboardAvoidingView } from "./extra/3rd-party";
+import { KeyboardAvoidingView } from "../ankan-payment/extra/3rd-party";
 import { Address } from "./extra/data";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
