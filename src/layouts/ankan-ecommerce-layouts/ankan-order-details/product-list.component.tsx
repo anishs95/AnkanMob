@@ -33,7 +33,7 @@ export const ProductListScreen = ({
 
   const getOrderStatusByUserID = async (userids) => {
     await fetch(
-      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/62711ac41b321cb410eada02" +
+      "https://api.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/62711ac41b321cb410eada02" +
         userids,
       {
         method: "GET",
@@ -60,7 +60,7 @@ export const ProductListScreen = ({
   useEffect(() => {
     //  alert("Order Id" + route.params.orderId);
     fetch(
-      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/" +
+      "https://api.ankanchem.net/purchase/api/Purchase/GetOrdersByOrderId/" +
         route.params.orderId,
       {
         method: "GET",
@@ -115,7 +115,7 @@ export const ProductListScreen = ({
   const onItemPress = (index: number): void => {
     //alert(index);
     fetch(
-      "https://api.dev.ankanchem.net/products/api/Product/GetProduct/" + index,
+      "https://api.ankanchem.net/products/api/Product/GetProduct/" + index,
       {
         method: "GET",
         headers: {

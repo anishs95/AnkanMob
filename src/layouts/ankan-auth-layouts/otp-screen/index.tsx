@@ -59,7 +59,7 @@ export default ({ navigation }): React.ReactElement => {
       console.log("User ID > " + userId);
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-      fetch("https://api.dev.ankanchem.net/users/api/User/VerifyOTP", {
+      fetch("https://api.ankanchem.net/users/api/User/VerifyOTP", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -105,17 +105,14 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const onOTPentered2 = (): void => {
-    fetch(
-      "https://api.dev.ankanchem.net/users/api/User/GetOTP/" + phoneNumber,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + "1234",
-        },
-      }
-    )
+    fetch("https://api.ankanchem.net/users/api/User/GetOTP/" + phoneNumber, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + "1234",
+      },
+    })
       .then((response) => response.json())
       .then((json) => {
         AsyncStorage.setItem("activationId", json.activationId);

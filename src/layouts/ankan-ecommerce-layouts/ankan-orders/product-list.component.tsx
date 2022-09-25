@@ -37,7 +37,7 @@ export const ProductListScreen = ({
 
   const getOrderStatusByUserID = async (userids) => {
     await fetch(
-      "https://api.dev.ankanchem.net/purchase/api/Purchase/GetOrdersByUser/" +
+      "https://api.ankanchem.net/purchase/api/Purchase/GetOrdersByUser/" +
         userids,
       {
         method: "GET",

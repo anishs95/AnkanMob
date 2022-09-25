@@ -6,6 +6,7 @@ import {
   ListRenderItemInfo,
   ScrollView,
   View,
+  RefreshControl,
 } from "react-native";
 import {
   Button,
@@ -28,6 +29,7 @@ export default ({ navigation }): React.ReactElement => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [totalEarnedReward, setTotalEarnedReward] = React.useState<string>();
   const [data, setData] = React.useState<[]>();
+  const [refreshing, setRefreshing] = React.useState(false);
   // const data = new Array(8).fill({
   //   title: "Item",
   //   description: "Description for Item",
@@ -39,23 +41,29 @@ export default ({ navigation }): React.ReactElement => {
     getUserId();
   }, [navigation]);
 
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
   const getUserId = async () => {
     try {
       const usrId = await AsyncStorage.getItem("userId");
       fetch(
-        "https://api.dev.ankanchem.net/rewards/api/Rewards/GetUserReward/" +
-          usrId
+        "https://api.ankanchem.net/rewards/api/Rewards/GetUserReward/" + usrId
       )
         .then((response) => response.json())
         .then((json) => {
           setTotalEarnedReward("₹ " + json.totalEarnedReward + "/-");
-          console.log(JSON.stringify(json.totalEarnedReward));
+          console.log("Total rewards " + JSON.stringify(json));
         })
-        .catch((error) => console.error("error44" + error))
+        .catch((error) => {
+          console.error("error44" + error);
+          setTotalEarnedReward("₹ " + 0 + "/-");
+        })
         .finally(() => setIsLoading(false));
 
       fetch(
-        "https://api.dev.ankanchem.net/rewards/api/Rewards/GetRewardsByUser/" +
+        "https://api.ankanchem.net/rewards/api/Rewards/GetRewardsByUser/" +
           usrId
       )
         .then((response) => response.json())
@@ -83,9 +91,19 @@ export default ({ navigation }): React.ReactElement => {
       <Text>Status : {`${item.status} `}</Text>
     </Card>
   );
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getUserId();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <ImageOverlay style={styles.image} source={product.primaryImage} />
       <Card
         style={styles.bookingCard}

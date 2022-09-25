@@ -29,7 +29,7 @@ export default ({ navigation }): React.ReactElement => {
   const [locationId, setLocationId] = useState();
 
   useEffect(() => {
-    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
+    fetch("https://api.ankanchem.net/location/api/Location/GetLocations")
       .then((response) => response.json())
       .then((json) => setLocationList(json))
       .catch((error) => console.error(error));
@@ -67,7 +67,7 @@ export default ({ navigation }): React.ReactElement => {
       alert("Empty Fields");
     } else {
       setIsLoading(true);
-      fetch("https://api.dev.ankanchem.net/users/api/User/Register", {
+      fetch("https://api.ankanchem.net/users/api/User/Register", {
         method: "POST",
         headers: {
           Accept: "application/json",

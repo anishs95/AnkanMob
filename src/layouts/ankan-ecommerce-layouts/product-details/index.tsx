@@ -66,7 +66,7 @@ export default ({ navigation, props }): React.ReactElement => {
           borderColor: "red",
           borderWidth: 16,
           marginHorizontal: 2,
-          borderRadius: 1,
+          borderRadius: 0.5,
           backgroundColor: "red",
           alignItems: "center",
           justifyContent: "center",
@@ -192,7 +192,7 @@ export default ({ navigation, props }): React.ReactElement => {
       color = data.colors[selectedColorIndex];
     }
     fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+      "https://api.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userId +
         "/" +
         locationId,
@@ -238,7 +238,7 @@ export default ({ navigation, props }): React.ReactElement => {
   }
   const onCalculateButtonPress = (): void => {
     fetch(
-      "https://api.dev.ankanchem.net/products/api/Product/GetProductConsumption/" +
+      "https://api.ankanchem.net/products/api/Product/GetProductConsumption/" +
         data.id +
         "/" +
         areaSqFt
@@ -498,7 +498,7 @@ const themedStyles = StyleService.create({
   consumptionContent: {
     margin: 5,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: "background-basic-color-4",
   },
 

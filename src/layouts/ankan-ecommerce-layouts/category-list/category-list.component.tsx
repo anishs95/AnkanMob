@@ -49,7 +49,7 @@ export const CategoryListScreen = ({
       };
 
       await fetch(
-        "https://api.dev.ankanchem.net/products/api/Product/GetAllProductCategories",
+        "https://api.ankanchem.net/products/api/Product/GetAllProductCategories",
         {
           method: "GET",
           headers: {
@@ -140,6 +140,7 @@ export const CategoryListScreen = ({
   ): React.ReactElement => (
     <Card
       style={styles.productItem}
+      //appearance="filled"
       header={() => renderItemHeader(info)}
       footer={() => renderItemFooter(info)}
       onPress={() => onItemPress2(info.item.id)}
@@ -183,6 +184,16 @@ const themedStyles = StyleService.create({
     margin: 8,
     maxWidth: Dimensions.get("window").width / 2 - 24,
     backgroundColor: "background-basic-color-1",
+    // borderWidth: 3,
+    // borderColor: "grey",
+    shadowColor: "#30C1DD",
+    shadowRadius: 10,
+    shadowOpacity: 0.9,
+    elevation: 8,
+    shadowOffset: {
+      width: 6,
+      height: 9,
+    },
   },
   itemHeader: {
     height: 140,

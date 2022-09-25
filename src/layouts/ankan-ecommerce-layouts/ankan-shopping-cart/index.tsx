@@ -71,7 +71,7 @@ export default ({ navigation }): React.ReactElement => {
     setIsLoading2(true);
     console.log(cartName);
     fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/SaveCart/" +
+      "https://api.ankanchem.net/cart/api/Cart/SaveCart/" +
         userId +
         "/" +
         cartName,
@@ -114,7 +114,7 @@ export default ({ navigation }): React.ReactElement => {
     console.log("Share cart :" + sharePhoneNumber);
     console.log("Share cart :" + cartId);
     fetch(
-      "https://api.dev.ankanchem.net/cart/api/Cart/SendYourCart/" +
+      "https://api.ankanchem.net/cart/api/Cart/SendYourCart/" +
         userId +
         "/" +
         cartId +
@@ -161,9 +161,7 @@ export default ({ navigation }): React.ReactElement => {
         console.log("USER ID " + res);
         getCartItems(res, null);
         setUserId(res);
-        fetch(
-          "https://api.dev.ankanchem.net/cart/api/Cart/GetUserCartList/" + res
-        )
+        fetch("https://api.ankanchem.net/cart/api/Cart/GetUserCartList/" + res)
           .then((response) => response.json())
           .then((json) => {
             setCartList(json);
@@ -181,14 +179,14 @@ export default ({ navigation }): React.ReactElement => {
     var URL;
     if (cartId == null) {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/GetCart/" +
         usrIds +
         "/" +
         lcnId;
       setDefaultCart(true);
     } else {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/GetCart/" +
         userId +
         "/" +
         cartId +
@@ -282,13 +280,13 @@ export default ({ navigation }): React.ReactElement => {
 
     if (cartId == null || typeof cartId == "undefined") {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
         userId +
         "/" +
         cusLocationId;
     } else {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/RemoveItemFromCart/" +
         userId +
         "/" +
         cartId +

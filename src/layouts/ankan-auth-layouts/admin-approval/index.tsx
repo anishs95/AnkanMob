@@ -81,7 +81,7 @@ export default ({ navigation }): React.ReactElement => {
         activationSecret
     );
 
-    fetch("https://api.dev.ankanchem.net/users/api/User/VerifyOTP", {
+    fetch("https://api.ankanchem.net/users/api/User/VerifyOTP", {
       method: "POST",
       headers: {
         Accept: "application/json",

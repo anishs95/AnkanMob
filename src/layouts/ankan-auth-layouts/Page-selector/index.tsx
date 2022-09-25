@@ -44,7 +44,7 @@ export default ({ navigation }): React.ReactElement => {
       }
     });
 
-    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
+    fetch("https://api.ankanchem.net/location/api/Location/GetLocations")
       .then((response) => response.json())
       .then((json) => setLocationList(json))
       .catch((error) => console.error(error));

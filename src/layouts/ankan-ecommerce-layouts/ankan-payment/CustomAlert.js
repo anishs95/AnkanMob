@@ -46,7 +46,10 @@ export default function CustomAlert({
                   <MaterialIcons name="cancel" color={"red"} size={80} />
                 </>
               )}
-              <Text style={{ fontSize: 18, marginTop: -15 }}>{displayMsg}</Text>
+              <Text style={{ fontSize: 18, marginTop: -30 }}>{displayMsg}</Text>
+              <Text style={{ fontSize: 10, marginTop: 2 }}>
+                Ankan Will Contact You In 15min.
+              </Text>
             </View>
 
             {/* <TouchableOpacity

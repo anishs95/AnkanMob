@@ -27,7 +27,7 @@ export default ({ navigation }): React.ReactElement => {
   const [locationId, setLocationId] = useState();
 
   useEffect(() => {
-    fetch("https://api.dev.ankanchem.net/location/api/Location/GetLocations")
+    fetch("https://api.ankanchem.net/location/api/Location/GetLocations")
       .then((response) => response.json())
       .then((json) => setLocationList(json))
       .catch((error) => console.error(error));
@@ -37,7 +37,7 @@ export default ({ navigation }): React.ReactElement => {
     if (phno == null || place == null) {
       alert("Empty Fields");
     } else {
-      fetch("https://api.dev.ankanchem.net/users/api/User/GetOTP/" + phno, {
+      fetch("https://api.ankanchem.net/users/api/User/GetOTP/" + phno, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -102,9 +102,10 @@ export default ({ navigation }): React.ReactElement => {
             // place = value.id;
             return value.locationName;
           })}
-          dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
+          // dropdownTextStyle={styles.dropdown_3_dropdownTextStyle}
           style={styles.dropdown_5}
           isFullWidth
+          saveScrollPosition="true"
           textStyle={styles.dropdown_2_text}
           onSelect={(index3, value3) => {
             setLocationId(locationList[index3].id);

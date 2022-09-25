@@ -58,13 +58,13 @@ export const CartItem = (props: CartItemProps): React.ReactElement => {
     var URL;
     if (cartId == null) {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userIds +
         "/" +
         "<location>";
     } else {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/AddItemToCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/AddItemToCart/" +
         userIds +
         "/" +
         cartId +

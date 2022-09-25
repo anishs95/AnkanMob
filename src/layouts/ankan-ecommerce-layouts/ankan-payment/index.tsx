@@ -45,13 +45,13 @@ export default ({ navigation, route }): React.ReactElement => {
     // alert("GET CART :" + cartId);
     if (cartId == null || cartId == "") {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/GetCart/" +
         userIds +
         "/" +
         "<location>";
     } else {
       URL =
-        "https://api.dev.ankanchem.net/cart/api/Cart/GetCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/GetCart/" +
         userIds +
         "/" +
         cartId +
@@ -102,14 +102,14 @@ export default ({ navigation, route }): React.ReactElement => {
     console.log("Cart clearing Success " + userId);
     console.log(
       "URL cart clearing :" +
-        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/ClearCart/" +
         userId +
         "/" +
         cartNameSelected
     );
     try {
       fetch(
-        "https://api.dev.ankanchem.net/cart/api/Cart/ClearCart/" +
+        "https://api.ankanchem.net/cart/api/Cart/ClearCart/" +
           userId +
           "/" +
           cartNameSelected,
@@ -216,7 +216,7 @@ export default ({ navigation, route }): React.ReactElement => {
     console.log(locationId);
     console.log(userId);
 
-    fetch("https://api.dev.ankanchem.net/purchase/api/Purchase/PlaceOrder", {
+    fetch("https://api.ankanchem.net/purchase/api/Purchase/PlaceOrder", {
       method: "POST",
       headers: {
         Accept: "application/json",

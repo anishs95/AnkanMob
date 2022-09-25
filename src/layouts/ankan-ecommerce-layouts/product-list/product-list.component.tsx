@@ -40,7 +40,7 @@ export const ProductListScreen = ({
 
       console.log("categoryIDnumber in use :- " + jsonValue);
       fetch(
-        "https://api.dev.ankanchem.net/products/api/Product/GetAllProductsByCategory/" +
+        "https://api.ankanchem.net/products/api/Product/GetAllProductsByCategory/" +
           jsonValue +
           "/" +
           lcnId
@@ -67,7 +67,7 @@ export const ProductListScreen = ({
       );
 
       fetch(
-        "https://api.dev.ankanchem.net/products/api/product/FindProductsByProductSelector/" +
+        "https://api.ankanchem.net/products/api/product/FindProductsByProductSelector/" +
           lcnId +
           "/Tile",
         {
@@ -213,12 +213,21 @@ const themedStyles = StyleService.create({
   productList: {
     paddingHorizontal: 8,
     paddingVertical: 8,
+    paddingBottom: 70,
   },
   productItem: {
     flex: 1,
     margin: 8,
     maxWidth: Dimensions.get("window").width / 2 - 24,
     backgroundColor: "background-basic-color-1",
+    shadowColor: "#30C1DD",
+    shadowRadius: 10,
+    shadowOpacity: 0.9,
+    elevation: 8,
+    shadowOffset: {
+      width: 6,
+      height: 9,
+    },
   },
   itemHeader: {
     height: 140,
